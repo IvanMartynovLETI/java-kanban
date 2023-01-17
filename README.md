@@ -1,6 +1,6 @@
 ## Это репозиторий проекта "Трекер задач" ##  
 
-Проект реализован в виде пакета TaskTracker и для задач типов Task, Subtask и Epic обеспечивает:  
+Проект реализован в виде пакета taskTracker и для задач типов Task, Subtask и Epic обеспечивает:  
 * Хранение  
 * Получение списка всех задач  
 * Удаление всех задач  
@@ -14,22 +14,21 @@
 Приложение написано на Java. Пример кода:  
 ```Java  
 public class TaskManager {
-    public void updateSubtask(Subtask subtask) {
+    public void updateTask(Task task) {
 
-        switch (subtask.getTaskStatus()) {
-            case "NEW":
-                subtask.taskStatus = "IN_PROGRESS";
-                break;
-            case "IN_PROGRESS":
-                subtask.taskStatus = "DONE";
-                break;
-            default: //reserved for future use
-                break;
+        switch (task.getTaskStatus()) {
+            case "NEW" -> task.taskStatus = "IN_PROGRESS";
+            case "IN_PROGRESS" -> task.taskStatus = "DONE";
+            default -> {
+            } //reserved for future use
         }
+
+        deleteTaskById(task.getTaskId());
+        putTask(task);
     }
 }
 ```
-------  
+---  
 Разработчик: Мартынов Иван Александрович (iamartynov@rambler.ru)
 
 
