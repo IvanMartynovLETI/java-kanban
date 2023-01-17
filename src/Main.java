@@ -1,4 +1,7 @@
-import taskTracker.*;
+import manager.TaskManager;
+import task.Epic;
+import task.Subtask;
+import task.Task;
 
 public class Main {
     public static void main(String[] args) {
@@ -15,28 +18,28 @@ public class Main {
         taskManager.updateTask(task1);
         System.out.println("\nStatus of task1 updated to IN_PROGRESS");
         System.out.println("task1 after updating is:");
-        System.out.println(taskManager.getTaskById(taskManager.getTaskId(task1)));
+        System.out.println(taskManager.getTaskById(task1.getId()));
         System.out.println("List of tasks after task1 updating is:");
         System.out.println(taskManager.getListOfTasks());
 
         taskManager.updateTask(task1);
         System.out.println("\nStatus of task1 updated to DONE");
         System.out.println("task1 after updating is:");
-        System.out.println(taskManager.getTaskById(taskManager.getTaskId(task1)));
+        System.out.println(taskManager.getTaskById(task1.getId()));
         System.out.println("List of tasks after task1 updating is:");
         System.out.println(taskManager.getListOfTasks());
 
         taskManager.updateTask(task2);
         System.out.println("\nStatus of task2 updated to IN_PROGRESS");
         System.out.println("task2 after updating is:");
-        System.out.println(taskManager.getTaskById(taskManager.getTaskId(task2)));
+        System.out.println(taskManager.getTaskById(task2.getId()));
         System.out.println("List of tasks after task2 updating is:");
         System.out.println(taskManager.getListOfTasks());
 
         taskManager.updateTask(task2);
         System.out.println("\nStatus of task2 updated to DONE");
         System.out.println("task2 after updating is:");
-        System.out.println(taskManager.getTaskById(taskManager.getTaskId(task1)));
+        System.out.println(taskManager.getTaskById(task2.getId()));
         System.out.println("List of tasks after task2 updating is:");
         System.out.println(taskManager.getListOfTasks());
 
@@ -73,7 +76,7 @@ public class Main {
 
         taskManager.updateEpic(epic1);
         System.out.println("\nepic1 after updating is:");
-        System.out.println(taskManager.getEpicById(taskManager.getEpicId(epic1)));
+        System.out.println(taskManager.getEpicById(epic1.getId()));
         System.out.println("List of epics after updating epic1 is:");
         System.out.println(taskManager.getListOfEpics());
         System.out.println("List of subtasks for epic1 after epic1 updated is:");
@@ -83,7 +86,7 @@ public class Main {
 
         taskManager.updateEpic(epic2);
         System.out.println("\nepic2 after updating is:");
-        System.out.println(taskManager.getEpicById(taskManager.getEpicId(epic2)));
+        System.out.println(taskManager.getEpicById(epic2.getId()));
         System.out.println("List of epics after updating epic2 is:");
         System.out.println(taskManager.getListOfEpics());
         System.out.println("List of subtasks for epic2 after epic2 updated is:");
@@ -91,99 +94,99 @@ public class Main {
         System.out.println("List of subtasks after epic2 updated is:");
         System.out.println(taskManager.getListOfSubtasks());
 
-        taskManager.updateSubtask(subtask1);
+        taskManager.updateSubtask(subtask1, epic1);
         taskManager.updateEpic(epic1);
         System.out.println("\nsubtask1 after updating to IN_PROGRESS is");
-        System.out.println(taskManager.getSubtaskById(taskManager.getSubtaskId(subtask1)));
+        System.out.println(epic1.getSubtaskById(subtask1.getId(), taskManager));
         System.out.println("List of subtasks after subtask1 updating is:");
         System.out.println(taskManager.getListOfSubtasks());
         System.out.println("List of subtasks in epic1 after subtask1 and epic1 updating is:");
         System.out.println(taskManager.getListOfSubtasksInEpic(epic1));
         System.out.println("epic1 after subtask1 and epic1 updating is:");
-        System.out.println(taskManager.getEpicById(taskManager.getEpicId(epic1)));
+        System.out.println(taskManager.getEpicById(epic1.getId()));
         System.out.println("List of epics after subtask1 and epic1 updating is:");
         System.out.println(taskManager.getListOfEpics());
 
-        taskManager.updateSubtask(subtask2);
+        taskManager.updateSubtask(subtask2, epic1);
         taskManager.updateEpic(epic1);
         System.out.println("\nsubtask2 after updating to IN_PROGRESS is");
-        System.out.println(taskManager.getSubtaskById(taskManager.getSubtaskId(subtask2)));
+        System.out.println(epic1.getSubtaskById(subtask2.getId(), taskManager));
         System.out.println("List of subtasks after subtask2 updating is:");
         System.out.println(taskManager.getListOfSubtasks());
         System.out.println("List of subtasks in epic1 after subtask2 and epic1 updating is:");
         System.out.println(taskManager.getListOfSubtasksInEpic(epic1));
         System.out.println("epic1 after subtask2 and epic1 updating is:");
-        System.out.println(taskManager.getEpicById(taskManager.getEpicId(epic1)));
+        System.out.println(taskManager.getEpicById(epic1.getId()));
         System.out.println("List of epics after subtask2 and epic1 updating is:");
         System.out.println(taskManager.getListOfEpics());
 
-        taskManager.updateSubtask(subtask1);
+        taskManager.updateSubtask(subtask1, epic1);
         taskManager.updateEpic(epic1);
         System.out.println("\nsubtask1 after updating to DONE is");
-        System.out.println(taskManager.getSubtaskById(taskManager.getSubtaskId(subtask1)));
+        System.out.println(epic1.getSubtaskById(subtask1.getId(), taskManager));
         System.out.println("List of subtasks after subtask1 updating is:");
         System.out.println(taskManager.getListOfSubtasks());
         System.out.println("List of subtasks in epic1 after subtask1 and epic1 updating is:");
         System.out.println(taskManager.getListOfSubtasksInEpic(epic1));
         System.out.println("epic1 after subtask1 and epic1 updating is:");
-        System.out.println(taskManager.getEpicById(taskManager.getEpicId(epic1)));
+        System.out.println(taskManager.getEpicById(epic1.getId()));
         System.out.println("List of epics after subtask1 and epic1 updating is:");
         System.out.println(taskManager.getListOfEpics());
 
-        taskManager.updateSubtask(subtask2);
+        taskManager.updateSubtask(subtask2, epic1);
         taskManager.updateEpic(epic1);
         System.out.println("\nsubtask2 after updating to DONE is");
-        System.out.println(taskManager.getSubtaskById(taskManager.getSubtaskId(subtask2)));
+        System.out.println(epic1.getSubtaskById(subtask2.getId(), taskManager));
         System.out.println("List of subtasks after subtask2 updating is:");
         System.out.println(taskManager.getListOfSubtasks());
         System.out.println("List of subtasks in epic1 after subtask2 and epic1 updating is:");
         System.out.println(taskManager.getListOfSubtasksInEpic(epic1));
         System.out.println("epic1 after subtask2 and epic1 updating is:");
-        System.out.println(taskManager.getEpicById(taskManager.getEpicId(epic1)));
+        System.out.println(taskManager.getEpicById(epic1.getId()));
         System.out.println("List of epics after subtask2 and epic1 updating is:");
         System.out.println(taskManager.getListOfEpics());
 
-        taskManager.updateSubtask(subtask3);
+        taskManager.updateSubtask(subtask3, epic2);
         taskManager.updateEpic(epic2);
         System.out.println("\nsubtask3 after updating to IN_PROGRESS is");
-        System.out.println(taskManager.getSubtaskById(taskManager.getSubtaskId(subtask3)));
+        System.out.println(epic2.getSubtaskById(subtask3.getId(), taskManager));
         System.out.println("List of subtasks after subtask3 updating is:");
         System.out.println(taskManager.getListOfSubtasks());
         System.out.println("List of subtasks in epic2 after subtask3 and epic2 updating is:");
         System.out.println(taskManager.getListOfSubtasksInEpic(epic2));
         System.out.println("epic2 after subtask3 and epic2 updating is:");
-        System.out.println(taskManager.getEpicById(taskManager.getEpicId(epic2)));
+        System.out.println(taskManager.getEpicById(epic2.getId()));
         System.out.println("List of epics after subtask3 and epic2 updating is:");
         System.out.println(taskManager.getListOfEpics());
 
-        taskManager.updateSubtask(subtask3);
+        taskManager.updateSubtask(subtask3, epic2);
         taskManager.updateEpic(epic2);
         System.out.println("\nsubtask3 after updating to DONE is");
-        System.out.println(taskManager.getSubtaskById(taskManager.getSubtaskId(subtask3)));
+        System.out.println(epic2.getSubtaskById(subtask3.getId(), taskManager));
         System.out.println("List of subtasks after subtask3 updating is:");
         System.out.println(taskManager.getListOfSubtasks());
         System.out.println("List of subtasks in epic2 after subtask3 and epic2 updating is:");
         System.out.println(taskManager.getListOfSubtasksInEpic(epic2));
         System.out.println("epic2 after subtask3 and epic2 updating is:");
-        System.out.println(taskManager.getEpicById(taskManager.getEpicId(epic2)));
+        System.out.println(taskManager.getEpicById(epic2.getId()));
         System.out.println("List of epics after subtask3 and epic2 updating is:");
         System.out.println(taskManager.getListOfEpics());
 
-        taskManager.deleteEpicById(taskManager.getEpicId(epic2));
+        taskManager.deleteEpicById(epic2.getId());
         System.out.println("\nepic2 deleted");
         System.out.println("list of epics after epic2 deleted is:");
         System.out.println(taskManager.getListOfEpics());
         System.out.println("List of subtasks after epic2 deletion is:");
         System.out.println(taskManager.getListOfSubtasks());
 
-        taskManager.deleteSubtaskById(taskManager.getSubtaskId(subtask1));
+        epic1.deleteSubtaskById(subtask1.getId(), taskManager);
         taskManager.updateEpic(epic1);
         System.out.println("\nList of subtasks after subtask1 deleting is:");
         System.out.println(taskManager.getListOfSubtasks());
         System.out.println("List of subtasks in epic1 after subtask1 deleting is:");
         System.out.println(taskManager.getListOfSubtasksInEpic(epic1));
         System.out.println("epic1 after deleting of subtask1 is:");
-        System.out.println(taskManager.getEpicById(taskManager.getEpicId(epic1)));
+        System.out.println(taskManager.getEpicById(epic1.getId()));
         System.out.println("List of epics after deleting of subtask1 is:");
         System.out.println(taskManager.getListOfEpics());
 
@@ -194,11 +197,11 @@ public class Main {
         System.out.println("List of subtasks in epic1 after subtask2 deleting is:");
         System.out.println(taskManager.getListOfSubtasksInEpic(epic1));
         System.out.println("epic1 after deleting of subtask2 is:");
-        System.out.println(taskManager.getEpicById(taskManager.getEpicId(epic1)));
+        System.out.println(taskManager.getEpicById(epic1.getId()));
         System.out.println("List of epics after deleting of subtask2 is:");
         System.out.println(taskManager.getListOfEpics());
 
-        taskManager.deleteTaskById(taskManager.getTaskId(task1));
+        taskManager.deleteTaskById(task1.getId());
         System.out.println("\nList of tasks after task1 deletion is:");
         System.out.println(taskManager.getListOfTasks());
         taskManager.deleteAllTasks();
@@ -209,6 +212,7 @@ public class Main {
         System.out.println("List of epics after its clearing is:");
         System.out.println(taskManager.getListOfEpics());
         System.out.println("List of subtasks after all epics deletion is:");
+        System.out.println(taskManager.getListOfSubtasks());
     }
 }
 

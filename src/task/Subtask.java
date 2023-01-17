@@ -1,27 +1,27 @@
-package taskTracker;
+package task;
 
 import java.util.Objects;
 
 public class Subtask extends Task {
-    protected int upperEpcId;
+    private final int upperEpcId;
 
-    protected Subtask(int subtaskId, String subtaskName, String subtaskDescription, Epic upperEpc) {
+    public Subtask(int subtaskId, String subtaskName, String subtaskDescription, Epic upperEpc) {
         super(subtaskId, subtaskName, subtaskDescription);
-        this.upperEpcId = upperEpc.taskId;
+        this.upperEpcId = upperEpc.id;
     }
 
-    protected int getUpperEpicId() {
+    public int getUpperEpicId() {
         return upperEpcId;
     }
 
     @Override
     public String toString() {
         return "Subtask{" +
-                "subtaskId=" + taskId +
-                ", SubtaskName='" + taskName + '\'' +
-                ", SubtaskDescription='" + taskDescription + '\'' +
-                ", SubtaskStatus='" + taskStatus + '\'' +
-                ", upperEpicId='" + upperEpcId + '\'' +
+                "subtaskId=" + id +
+                ", SubtaskName='" + name + '\'' +
+                ", SubtaskDescription='" + description + '\'' +
+                ", SubtaskStatus='" + status + '\'' +
+                ", upperEpcId='" + upperEpcId + '\'' +
                 '}';
     }
 
@@ -39,5 +39,3 @@ public class Subtask extends Task {
         return Objects.hash(super.hashCode(), upperEpcId);
     }
 }
-
-
