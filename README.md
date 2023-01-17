@@ -27,8 +27,8 @@ public class TaskManager {
         putTask(task);
     }
 }
-```
----
+```  
+
 Разработчик: Мартынов Иван Александрович (iamartynov@rambler.ru)
 
 
