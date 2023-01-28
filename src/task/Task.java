@@ -1,29 +1,31 @@
 package task;
 
+import manager.StaTus;
+
 import java.util.Objects;
 
 public class Task {
     protected int id;
     protected String name;
     protected String description;
-    protected String status;
+    protected StaTus status;
 
     public Task(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.status = "NEW";
+        this.status = StaTus.NEW;
     }
 
     public int getId() {
         return id;
     }
 
-    public String getStatus() {
+    public StaTus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StaTus status) {
         this.status = status;
     }
 
@@ -42,10 +44,7 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id
-                && Objects.equals(name, task.name)
-                && Objects.equals(description, task.description)
-                && status.equals(task.status);
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status;
     }
 
     @Override

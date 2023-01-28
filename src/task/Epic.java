@@ -1,6 +1,6 @@
 package task;
 
-import manager.TaskManager;
+import manager.InMemoryTaskManager;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -30,20 +30,9 @@ public class Epic extends Task {
         subTaskIds.clear();
     }
 
-    public Subtask getSubtaskById(int subtaskId, TaskManager taskManager) {
-        Subtask subtaskToBeFound = null;
-
-        for (Subtask subtask : taskManager.getListOfSubtasksByUpperEpicId(this.getId()))
-            if (subtask.getId() == subtaskId) {
-                subtaskToBeFound = subtask;
-                break;
-            }
-        return subtaskToBeFound;
-    }
-
-    public void deleteSubtaskById(int subtaskId, TaskManager taskManager) {
+    public void deleteSubtaskById(int subtaskId, InMemoryTaskManager inMemoryTaskManager) {
         unattachSubtaskFromEpic(subtaskId);
-        taskManager.getSubtasks().remove(subtaskId);
+        inMemoryTaskManager.getSubtasks().remove(subtaskId);
     }
 
     @Override
