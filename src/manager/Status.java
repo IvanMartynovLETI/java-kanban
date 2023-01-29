@@ -1,6 +1,6 @@
 package manager;
 
-public enum StaTus {
+public enum Status {
     NEW,
     IN_PROGRESS,
     DONE

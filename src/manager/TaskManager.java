@@ -5,6 +5,7 @@ import task.Subtask;
 import task.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
     //Task-specific methods
@@ -32,4 +33,7 @@ public interface TaskManager {
     <T extends Task> void update(T t);
 
     <T extends Task> void deleteAllTasksSameKind(T t);
+
+    //logging methods
+    List<Task> getHistory();
 }

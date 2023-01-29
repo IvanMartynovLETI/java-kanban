@@ -16,11 +16,13 @@
 ```Java  
 public class TaskManager {
     public <T extends Task> void update(T t) {
-        if(t instanceof Epic)
-            updateEpic((Epic)t);
-        else if(t instanceof Subtask)
-            updateSubtask((Subtask)t, getEpicById(((Subtask)t).getUpperEpicId()));
-        else updateTask(t);
+        if (t instanceof Epic) {
+            updateEpic((Epic) t);
+        } else if (t instanceof Subtask) {
+            updateSubtask((Subtask) t, getEpicById(((Subtask) t).getUpperEpicId()));
+        } else {
+            updateTask(t);
+        }
     }
 }
 ```  

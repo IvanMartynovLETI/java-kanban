@@ -1,4 +1,3 @@
-import manager.HistoryManager;
 import manager.InMemoryTaskManager;
 import manager.Managers;
 import manager.TaskManager;
@@ -8,8 +7,7 @@ import task.Task;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager taskManager = new Managers().getDefault();
-        HistoryManager historyManager = Managers.getDefaultHistory();
+        TaskManager taskManager = Managers.getDefault();
 
         Task task1 = taskManager.createTask("task1", "1st task");
         taskManager.put(task1);
@@ -48,7 +46,8 @@ public class Main {
         System.out.println(taskManager.getList(task2));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
         System.out.println("\nepic1 created");
@@ -73,8 +72,8 @@ public class Main {
         taskManager.put(subtask3);
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         System.out.println("\nInitial list of subtasks for epic1 is");
         System.out.println(((InMemoryTaskManager) taskManager).getListOfSubtasksInEpic(epic1));
@@ -86,8 +85,8 @@ public class Main {
         System.out.println(taskManager.getList(epic1));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         taskManager.update(epic1);
         System.out.println("\nepic1 after updating is:");
@@ -100,8 +99,8 @@ public class Main {
         System.out.println(taskManager.getList(subtask1));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         taskManager.update(epic2);
         System.out.println("\nepic2 after updating is:");
@@ -114,11 +113,10 @@ public class Main {
         System.out.println(taskManager.getList(subtask1));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         taskManager.update(subtask1);
-        taskManager.update(epic1);
         System.out.println("\nsubtask1 after updating to IN_PROGRESS is");
         System.out.println(taskManager.getSubtaskById(subtask1.getId()));
         System.out.println("List of subtasks after subtask1 updating is:");
@@ -131,11 +129,10 @@ public class Main {
         System.out.println(taskManager.getList(epic1));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         taskManager.update(subtask2);
-        taskManager.update(epic1);
         System.out.println("\nsubtask2 after updating to IN_PROGRESS is");
         System.out.println(taskManager.getSubtaskById(subtask2.getId()));
         System.out.println("List of subtasks after subtask2 updating is:");
@@ -148,11 +145,10 @@ public class Main {
         System.out.println(taskManager.getList(epic1));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         taskManager.update(subtask1);
-        taskManager.update(epic1);
         System.out.println("\nsubtask1 after updating to DONE is");
         System.out.println(taskManager.getSubtaskById(subtask1.getId()));
         System.out.println("List of subtasks after subtask1 updating is:");
@@ -165,11 +161,10 @@ public class Main {
         System.out.println(taskManager.getList(epic1));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         taskManager.update(subtask2);
-        taskManager.update(epic1);
         System.out.println("\nsubtask2 after updating to DONE is");
         System.out.println(taskManager.getSubtaskById(subtask2.getId()));
         System.out.println("List of subtasks after subtask2 updating is:");
@@ -182,11 +177,10 @@ public class Main {
         System.out.println(taskManager.getList(epic1));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         taskManager.update(subtask3);
-        taskManager.update(epic2);
         System.out.println("\nsubtask3 after updating to IN_PROGRESS is");
         System.out.println(taskManager.getSubtaskById(subtask3.getId()));
         System.out.println("List of subtasks after subtask3 updating is:");
@@ -199,11 +193,10 @@ public class Main {
         System.out.println(taskManager.getList(epic1));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         taskManager.update(subtask3);
-        taskManager.update(epic2);
         System.out.println("\nsubtask3 after updating to DONE is");
         System.out.println(taskManager.getSubtaskById(subtask3.getId()));
         System.out.println("List of subtasks after subtask3 updating is:");
@@ -216,8 +209,8 @@ public class Main {
         System.out.println(taskManager.getList(epic1));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         taskManager.deleteTopLevelTaskById(epic2.getId(), epic2);
         System.out.println("\nepic2 deleted");
@@ -227,8 +220,8 @@ public class Main {
         System.out.println(taskManager.getList(subtask1));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         epic1.deleteSubtaskById(subtask1.getId(), (InMemoryTaskManager) taskManager);
         taskManager.update(epic1);
@@ -242,8 +235,8 @@ public class Main {
         System.out.println(taskManager.getList(epic1));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         taskManager.deleteAllTasksSameKind(subtask1);
         taskManager.update(epic1);
@@ -257,8 +250,8 @@ public class Main {
         System.out.println(taskManager.getList(epic1));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         taskManager.deleteTopLevelTaskById(task1.getId(), task1);
         System.out.println("\nList of tasks after task1 deletion is:");
@@ -268,8 +261,8 @@ public class Main {
         System.out.println(taskManager.getList(task1));
 
         System.out.println("\nHistory is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
 
         taskManager.deleteAllTasksSameKind(epic1);
         System.out.println("List of epics after its clearing is:");
@@ -278,8 +271,8 @@ public class Main {
         System.out.println(taskManager.getList(subtask1));
 
         System.out.println("History is:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Length of history is: " + historyManager.getHistory().size());
+        System.out.println(taskManager.getHistory());
+        System.out.println("Length of history is: " + taskManager.getHistory().size());
     }
 }
 
