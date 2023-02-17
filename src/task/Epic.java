@@ -32,6 +32,7 @@ public class Epic extends Task {
 
     public void deleteSubtaskById(int subtaskId, InMemoryTaskManager inMemoryTaskManager) {
         unattachSubtaskFromEpic(subtaskId);
+        inMemoryTaskManager.getHistoryManager().remove(subtaskId);
         inMemoryTaskManager.getSubtasks().remove(subtaskId);
     }
 

@@ -9,20 +9,23 @@
 * Обновление статуса задач
 * Удаление задач по идентификатору
 * Получение списка подзадач типа Subtask для задач типа Epic
-* Отображение последних просмотренных задач (последние 10 задач любого типа)
+* Отображение истории просмотренных задач (повторные просмотры отсутствуют)
 
 
 Приложение написано на Java. Пример кода:
 ```Java  
 public class TaskManager {
-    public <T extends Task> void update(T t) {
-        if (t instanceof Epic) {
-            updateEpic((Epic) t);
-        } else if (t instanceof Subtask) {
-            updateSubtask((Subtask) t, getEpicById(((Subtask) t).getUpperEpicId()));
-        } else {
-            updateTask(t);
+    public void updateTask(Task task) {
+
+        switch (task.getStatus()) {
+            case NEW -> task.setStatus(Status.IN_PROGRESS);
+            case IN_PROGRESS -> task.setStatus(Status.DONE);
+            default -> {
+            } //reserved for future use
         }
+        deleteTopLevelTaskById(task.getId(), task);
+        historyManager.add(task);
+        put(task);
     }
 }
 ```  
