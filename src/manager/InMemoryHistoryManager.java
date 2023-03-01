@@ -11,9 +11,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     CustomLinkedList<Task> customLinkedList = new CustomLinkedList<>();
 
     @SuppressWarnings({"uncheked", "rawtypes"})
-    public class CustomLinkedList<T extends Task> {
+    public static class CustomLinkedList<T extends Task> {
 
-        public class Node<E extends Task> {
+        public static class Node<E extends Task> {
             private final E task;
             private Node<E> prev;
             private Node<E> next;

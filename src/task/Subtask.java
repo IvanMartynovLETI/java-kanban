@@ -26,6 +26,11 @@ public class Subtask extends Task {
     }
 
     @Override
+    public Integer getEpicId() {
+        return getUpperEpicId();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

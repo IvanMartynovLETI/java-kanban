@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
-    private int id = 0;
-    private final HashMap<Integer, Task> tasks;
-    private final HashMap<Integer, Subtask> subtasks;
-    private final HashMap<Integer, Epic> epics;
+    protected int id = 0;
+    protected final HashMap<Integer, Task> tasks;
+    protected final HashMap<Integer, Subtask> subtasks;
+    protected final HashMap<Integer, Epic> epics;
     private final HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
@@ -100,7 +100,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         indexOfSubtskAttachedToEpc = getEpicById(subtask.getUpperEpicId()).getSubTaskIds().indexOf(subtask.getId());
-        epic.deleteSubtaskById(subtask.getId(), this);
+        deleteSubtaskById(subtask.getId());
         put(subtask);
         historyManager.add(subtask);
         getEpicById(subtask.getUpperEpicId()).getSubTaskIds().add(indexOfSubtskAttachedToEpc, subtask.getId());
@@ -204,6 +204,12 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.remove(id);
             tasks.remove(id);
         }
+    }
+
+    public void deleteSubtaskById(int subtaskId) {
+        getEpicById(getSubtaskById(subtaskId).getUpperEpicId()).unattachSubtaskFromEpic(subtaskId);
+        historyManager.remove(subtaskId);
+        subtasks.remove(subtaskId);
     }
 
     @Override
