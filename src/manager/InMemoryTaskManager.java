@@ -13,13 +13,13 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> tasks;
     protected final HashMap<Integer, Subtask> subtasks;
     protected final HashMap<Integer, Epic> epics;
-    private final HistoryManager historyManager;
+    protected final HistoryManager historyManager;
 
-    public InMemoryTaskManager(HistoryManager historyManager) {
+    public InMemoryTaskManager() {
         this.tasks = new HashMap<>();
         this.subtasks = new HashMap<>();
         this.epics = new HashMap<>();
-        this.historyManager = historyManager;
+        this.historyManager = Managers.getDefaultHistory();
     }
 
     private int generateId() {
