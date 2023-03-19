@@ -43,7 +43,7 @@ public class InMemoryTaskManager implements TaskManager {
         return tasks.get(taskId);
     }
 
-    public void updateTask(Task task) {
+    protected void updateTask(Task task) {
 
         switch (task.getStatus()) {
             case NEW -> task.setStatus(Status.IN_PROGRESS);
@@ -70,7 +70,8 @@ public class InMemoryTaskManager implements TaskManager {
         return subtasks.get(subtaskId);
     }
 
-    public void assignSubtaskToEpic(Subtask subtask, Epic epic) {
+    private void assignSubtaskToEpic(Subtask subtask, Epic epic) {
+
         epic.attachSubtaskToEpic(subtask.getId());
     }
 
@@ -90,7 +91,7 @@ public class InMemoryTaskManager implements TaskManager {
         return subtasksAccordingToUpperEpcId;
     }
 
-    public void updateSubtask(Subtask subtask, Epic epic) {
+    protected void updateSubtask(Subtask subtask, Epic epic) {
         int indexOfSubtskAttachedToEpc;
         switch (subtask.getStatus()) {
             case NEW -> subtask.setStatus(Status.IN_PROGRESS);
@@ -130,7 +131,7 @@ public class InMemoryTaskManager implements TaskManager {
         return listOfSubtsksInEpc;
     }
 
-    public void updateEpic(Epic epic) {
+    protected void updateEpic(Epic epic) {
         ArrayList<Subtask> listOfSubtsksInEpc = getListOfSubtasksInEpic(epic);
         boolean isAllStatusesAreNew = true;
         boolean isAllStatusesAreDone = true;
@@ -207,9 +208,13 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void deleteSubtaskById(int subtaskId) {
-        getEpicById(getSubtaskById(subtaskId).getUpperEpicId()).unattachSubtaskFromEpic(subtaskId);
-        historyManager.remove(subtaskId);
-        subtasks.remove(subtaskId);
+        if (subtasks.containsKey(subtaskId)) {
+            Epic epic = getEpicById(getSubtaskById(subtaskId).getUpperEpicId());
+            epic.unattachSubtaskFromEpic(subtaskId);
+            historyManager.remove(subtaskId);
+            subtasks.remove(subtaskId);
+        }
+
     }
 
     @Override
@@ -241,6 +246,10 @@ public class InMemoryTaskManager implements TaskManager {
         } else if (t instanceof Subtask) {
             for (Epic epic : epics.values()) {
                 epic.getSubTaskIds().clear();
+                epic.setStartTime("01.01.0001 00:00");
+                epic.setDuration(0L);
+                epic.setEndTime();
+
             }
 
             for (Subtask subtask : subtasks.values()) {

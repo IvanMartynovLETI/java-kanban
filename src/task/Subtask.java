@@ -1,5 +1,7 @@
 package task;
 
+import manager.FileBackedTasksManager;
+
 import java.util.Objects;
 
 public class Subtask extends Task {
@@ -22,6 +24,9 @@ public class Subtask extends Task {
                 ", SubtaskDescription='" + description + '\'' +
                 ", SubtaskStatus='" + status + '\'' +
                 ", upperEpcId='" + upperEpcId + '\'' +
+                ", setStartTime='" + setStartTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
+                ", duration='" + duration.toMinutes() + '\'' +
+                ", endTime='" + endTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
                 '}';
     }
 
@@ -41,6 +46,7 @@ public class Subtask extends Task {
         if (!super.equals(o)) {
             return false;
         }
+
         Subtask subtask = (Subtask) o;
         return upperEpcId == subtask.upperEpcId;
     }

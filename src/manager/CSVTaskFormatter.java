@@ -20,7 +20,10 @@ public class CSVTaskFormatter {
         }
 
         String taskStr = t.getId() + "," + taskType + "," + t.getName() + "," + t.getStatus() + ","
-                + t.getDescription() + ",";
+                + t.getDescription() + ","
+                + t.getStartDateTime().format(FileBackedTasksManager.DATE_TIME_FORMATTER) + ","
+                + t.getDuraTion().toMinutes() + "," + t.getEndTime().format(FileBackedTasksManager.DATE_TIME_FORMATTER)
+                + ",";
         if (t.getEpicId() == 0) {
             taskStr += " \r\n";
         } else {
@@ -39,21 +42,27 @@ public class CSVTaskFormatter {
         String description = descriptors[4];
         int upperEpcId;
 
-        if (descriptors[5].equals(" ")) {
+        if (descriptors[8].equals(" ")) {
             upperEpcId = 0;
         } else {
-            upperEpcId = Integer.parseInt(descriptors[5]);
+            upperEpcId = Integer.parseInt(descriptors[8]);
         }
 
         switch (taskType) {
             case TASK -> {
                 Task restoredTask = new Task(id, name, description);
                 restoredTask.setStatus(status);
+                restoredTask.setStartTime(descriptors[5]);
+                restoredTask.setDuration(Long.parseLong(descriptors[6]));
+                restoredTask.setEndTime();
                 return restoredTask;
             }
             case EPIC -> {
                 Epic restoredEpic = new Epic(id, name, description);
                 restoredEpic.setStatus(status);
+                restoredEpic.setStartTime(descriptors[5]);
+                restoredEpic.setDuration(Long.parseLong(descriptors[6]));
+                restoredEpic.setEndTime(descriptors[7]);
                 return restoredEpic;
             }
             case SUBTASK -> {
@@ -61,6 +70,9 @@ public class CSVTaskFormatter {
                 Subtask restoredSubtask = new Subtask(id, name, description,
                         new Epic(upperEpcId, "", ""));
                 restoredSubtask.setStatus(status);
+                restoredSubtask.setStartTime(descriptors[5]);
+                restoredSubtask.setDuration(Long.parseLong(descriptors[6]));
+                restoredSubtask.setEndTime();
                 return restoredSubtask;
             }
             default -> {
@@ -80,17 +92,19 @@ public class CSVTaskFormatter {
     }
 
     public static List<Integer> historyFromString(String value) {
-        String[] historySubstrings = value.split(",");
         List<Integer> listOfWatchedTasksIds = new ArrayList<>();
+        if (!value.isEmpty()) {
+            String[] historySubstrings = value.split(",");
 
-        for (String element : historySubstrings) {
-            listOfWatchedTasksIds.add(Integer.parseInt(element));
+            for (String element : historySubstrings) {
+                listOfWatchedTasksIds.add(Integer.parseInt(element));
+            }
         }
 
         return listOfWatchedTasksIds;
     }
 
     public static String getHeader() {
-        return "id,type,name,status,description,epic\n";
+        return "id,type,name,status,description,setStartTime,duration,endTime,epic\n";
     }
 }

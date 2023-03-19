@@ -1,5 +1,9 @@
 package task;
 
+import manager.FileBackedTasksManager;
+import manager.ManagerSaveException;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -28,6 +32,21 @@ public class Epic extends Task {
         subTaskIds.clear();
     }
 
+    public void setStartTime(String setStartTime) {
+        LocalDateTime ldtm = LocalDateTime.parse(setStartTime, FileBackedTasksManager.DATE_TIME_FORMATTER);
+
+        if (this.setStartTime.getMinute() % FileBackedTasksManager.GRID_TIME_SPACE != 0) {
+            throw new ManagerSaveException("Start time should be exactly divisible by "
+                    + FileBackedTasksManager.startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + ".");
+        }
+
+        this.setStartTime = ldtm;
+
+        if (this.duration.toMinutes() != 0) {
+            setEndTime();
+        }
+    }
+
     @Override
     public String toString() {
         return "Epic{" +
@@ -36,6 +55,9 @@ public class Epic extends Task {
                 ", epicDescription='" + description + '\'' +
                 ", epicStatus='" + status + '\'' +
                 ", SubTaskIds=" + subTaskIds +
+                ", setStartTime='" + setStartTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
+                ", duration='" + duration.toMinutes() + '\'' +
+                ", endTime='" + endTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
                 '}';
     }
 
@@ -57,5 +79,11 @@ public class Epic extends Task {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), subTaskIds);
+    }
+
+
+    public void setEndTime(String endTime) {
+        this.endTime = LocalDateTime.parse(endTime, FileBackedTasksManager.DATE_TIME_FORMATTER);
+
     }
 }

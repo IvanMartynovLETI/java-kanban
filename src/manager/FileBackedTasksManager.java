@@ -8,16 +8,141 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final File file;
+    private final HashMap<LocalDateTime, Boolean> gridOfTiMes = new HashMap<>();
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    public static final Long GRID_TIME_SPACE = 15L;//шаг временнОй сетки планирования задач, минут
+    private LocalDateTime startDateTimeOfUnusualTsk; //задачи с пропущенным временем начала планировщик будет
+                                                     //помещать на конец года, каждая новая такая задача будет
+                                                     //сдвигаться к началу года.
+
+    private LocalDateTime tempEndTime;
+    private static final LocalDateTime nowDateTime = LocalDateTime.now();
+    public static final LocalDateTime startDateTime = nowDateTime.//Начальная точка временнОй шкалы
+            minusHours(nowDateTime.getHour()).                    //планирования задач (период планирования
+            minusMinutes(nowDateTime.getMinute()).                //-год).
+            minusSeconds(nowDateTime.getSecond()).
+            minusNanos(nowDateTime.getNano()).plusDays(1);
+
+    private static final LocalDateTime endDaTeTiMe = startDateTime.plusYears(1L); //Конечная точка временнОй шкалы
+                                                                                  // планирования задач.
+    private final Comparator<Task> comparator = Comparator.comparing(Task::getStartDateTime);
+
+    private final Set<Task> prioritizedTasks = new TreeSet<>(comparator);
 
     public FileBackedTasksManager(File file) {
-
         super();
         this.file = file;
+        this.startDateTimeOfUnusualTsk = endDaTeTiMe;
+        this.tempEndTime = endDaTeTiMe;
+        fillTiMeGrid();
+    }
+
+    private <T extends Task> void addToPrioritizedTasks(T t) {
+
+        for (LocalDateTime dtm = t.getStartDateTime(); dtm.isBefore(t.getEndTime().plusMinutes(GRID_TIME_SPACE));
+             dtm = dtm.plusMinutes(GRID_TIME_SPACE)) {
+            gridOfTiMes.put(dtm, false);
+        }
+
+        prioritizedTasks.add(t);
+    }
+
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
+    }
+
+    private void fillTiMeGrid() {
+        for (LocalDateTime dtm = startDateTime; dtm.isBefore(endDaTeTiMe.plusMinutes(GRID_TIME_SPACE));
+             dtm = dtm.plusMinutes(GRID_TIME_SPACE)) {
+            gridOfTiMes.put(dtm, true);
+        }
+    }
+
+    private void fillTiMeGridFromEndStringOfFile(List<String> listOfStrings) {
+        String[] elements = listOfStrings.get(listOfStrings.size() - 1).split(",");
+
+        for (LocalDateTime ldm = LocalDateTime.parse(elements[0], DATE_TIME_FORMATTER);
+             ldm.isBefore(LocalDateTime.parse(elements[1], DATE_TIME_FORMATTER).plusMinutes(GRID_TIME_SPACE));
+             ldm = ldm.plusMinutes(GRID_TIME_SPACE)) {
+            gridOfTiMes.put(ldm, true);
+        }
+    }
+
+    private LocalDateTime restoreTempEndTimeFromListOfStrings(List<String> listOfStrings) {
+        String[] elements = listOfStrings.get(listOfStrings.size() - 1).split(",");
+        return LocalDateTime.parse(elements[2], DATE_TIME_FORMATTER);
+    }
+
+    private void restoreTiMeGrid(Task task) {
+        if (!(task instanceof Epic)) {
+            for (LocalDateTime ldm = task.getStartDateTime();
+                 ldm.isBefore(task.getEndTime().plusMinutes(GRID_TIME_SPACE));
+                 ldm = ldm.plusMinutes(GRID_TIME_SPACE)) {
+                gridOfTiMes.put(ldm, true);
+            }
+        }
+    }
+
+    private boolean isTskValid(Task task) {
+
+        for (LocalDateTime dtm = task.getStartDateTime(); dtm.isBefore(task.getEndTime().plusMinutes(GRID_TIME_SPACE));
+             dtm = dtm.plusMinutes(GRID_TIME_SPACE)) {
+            if (!gridOfTiMes.get(dtm)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private <T extends Task> void incorrectTskImprover(T t) {
+        if (!(t instanceof Epic)) {
+            t.setStartTime((tempEndTime.minusMinutes(t.getDuraTion().toMinutes()))
+                    .format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+            t.setEndTime();
+            startDateTimeOfUnusualTsk = t.getStartDateTime().minusMinutes(GRID_TIME_SPACE);//обеспечиваем временной
+            tempEndTime = startDateTimeOfUnusualTsk;                                       //зазор между задачами
+        }
+    }
+
+    private void actualizeTimeParametersOfEpc(int epicId) {
+        ArrayList<Integer> iDsOfAttachedSubtsks = epics.get(epicId).getSubTaskIds();
+        LocalDateTime minStartTime = LocalDateTime.parse("01.01.0001 00:00", DATE_TIME_FORMATTER);
+        LocalDateTime maxEndTime = LocalDateTime.parse("01.01.0001 00:00", DATE_TIME_FORMATTER);
+        Duration sumOfDurations = Duration.ofMinutes(0);
+        Epic tempEpic;
+
+        for (Integer iD : iDsOfAttachedSubtsks) {
+            if (iDsOfAttachedSubtsks.indexOf(iD) == 0) {
+                minStartTime = subtasks.get(iD).getStartDateTime();
+                maxEndTime = subtasks.get(iD).getEndTime();
+            } else {
+                if (minStartTime.isAfter(subtasks.get(iD).getStartDateTime())) {
+                    minStartTime = subtasks.get(iD).getStartDateTime();
+                }
+
+                if (maxEndTime.isBefore(subtasks.get(iD).getEndTime())) {
+                    maxEndTime = subtasks.get(iD).getEndTime();
+                }
+            }
+            sumOfDurations = sumOfDurations.plus(subtasks.get(iD).getDuraTion());
+        }
+
+        tempEpic = epics.get(epicId);
+        tempEpic.setStartTime(minStartTime.format(DATE_TIME_FORMATTER));
+        tempEpic.setDuration(sumOfDurations.toMinutes());
+        tempEpic.setEndTime(maxEndTime.format(DATE_TIME_FORMATTER));
+
+        epics.remove(epicId);
+        epics.put(epicId, tempEpic);
     }
 
     public static FileBackedTasksManager loadFromFile(File file) throws ManagerSaveException {
@@ -34,6 +159,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 while (br.ready()) {
                     listOfStrings.add(br.readLine());
                 }
+                if (!fileBackedTasksManager.hasAnyKindOfTask(listOfStrings)) {
+                    throw new ManagerSaveException("Ann error occurred while restoring from log file");
+                }
+
+                fileBackedTasksManager.fillTiMeGridFromEndStringOfFile(listOfStrings);
+                fileBackedTasksManager.tempEndTime =
+                        fileBackedTasksManager.restoreTempEndTimeFromListOfStrings(listOfStrings);
+                fileBackedTasksManager.prioritizedTasks.clear();
 
                 int maxId = fileBackedTasksManager.getMaxId(listOfStrings);
                 fileBackedTasksManager.fillMaps(listOfStrings, fileBackedTasksManager);
@@ -48,11 +181,33 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return fileBackedTasksManager;
     }
 
-    public int getMaxId(ArrayList<String> listOfStrings) {
+    private boolean hasAnyKindOfTask(ArrayList<String> listOfStrings) {
+        boolean isContainsAnyKindOfTask = true;
+        if (listOfStrings.isEmpty()) {
+            isContainsAnyKindOfTask = false;
+        } else if (listOfStrings.get(listOfStrings.size() - 1).isEmpty()) {
+            isContainsAnyKindOfTask = false;
+        } else if (listOfStrings.size() < 5) {
+            isContainsAnyKindOfTask = false;
+        } else {
+            for (int line = 1; line < listOfStrings.size() - 4; line++) {
+
+                if (!(listOfStrings.get(line).contains("TASK") | listOfStrings.get(line).contains("SUBTASK")
+                        | listOfStrings.get(line).contains("EPIC"))) {
+                    isContainsAnyKindOfTask = false;
+                    break;
+                }
+            }
+        }
+
+        return isContainsAnyKindOfTask;
+    }
+
+    private int getMaxId(ArrayList<String> listOfStrings) {
         int maxId = 0;
         String[] taskElements;
 
-        for (int line = 1; line < listOfStrings.size() - 2; line++) {
+        for (int line = 1; line < listOfStrings.size() - 4; line++) {
             taskElements = listOfStrings.get(line).split(",");
             int tempMaxId = Integer.parseInt(taskElements[0]);
 
@@ -64,18 +219,26 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return maxId;
     }
 
-    public void fillMaps(ArrayList<String> list, FileBackedTasksManager fileBackedTasksManager) {
+    private void fillMaps(ArrayList<String> list, FileBackedTasksManager fileBackedTasksManager) {
         String[] taskElements;
 
-        for (int line = 1; line < list.size() - 2; line++) {
+        for (int line = 1; line < list.size() - 4; line++) {
             taskElements = list.get(line).split(",");
             int iD = Integer.parseInt(taskElements[0]);
             TaskType taskType = TaskType.valueOf(taskElements[1]);
 
             switch (taskType) {
-                case TASK -> fileBackedTasksManager.tasks.put(iD, CSVTaskFormatter.fromString(list.get(line)));
-                case SUBTASK -> fileBackedTasksManager.subtasks.put(iD,
-                        (Subtask) CSVTaskFormatter.fromString(list.get(line)));
+                case TASK -> {
+                    fileBackedTasksManager.tasks.put(iD, CSVTaskFormatter.fromString(list.get(line)));
+                    fileBackedTasksManager.addToPrioritizedTasks(Objects.requireNonNull(CSVTaskFormatter.
+                            fromString(list.get(line))));
+                }
+                case SUBTASK -> {
+                    fileBackedTasksManager.subtasks.put(iD,
+                            (Subtask) CSVTaskFormatter.fromString(list.get(line)));
+                    fileBackedTasksManager.addToPrioritizedTasks((Subtask) Objects.requireNonNull(CSVTaskFormatter.
+                            fromString(list.get(line))));
+                }
                 case EPIC -> fileBackedTasksManager.epics.put(iD,
                         (Epic) CSVTaskFormatter.fromString(list.get(line)));
                 default -> {
@@ -84,7 +247,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    public void attachSubtasksToEpics(FileBackedTasksManager fileBackedTasksManager) {
+    private void attachSubtasksToEpics(FileBackedTasksManager fileBackedTasksManager) {
 
         for (Subtask subtask : fileBackedTasksManager.subtasks.values()) {
             Epic tempEpic = fileBackedTasksManager.epics.get(subtask.getUpperEpicId());
@@ -92,10 +255,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             fileBackedTasksManager.epics.remove(subtask.getUpperEpicId());
             fileBackedTasksManager.epics.put(subtask.getUpperEpicId(), tempEpic);
         }
+
+        for (Epic epic : fileBackedTasksManager.epics.values()) {
+            actualizeTimeParametersOfEpc(epic.getId());
+        }
+
     }
 
-    public void restoreHistory(ArrayList<String> list, FileBackedTasksManager fileBackedTasksManager) {
-        String historyStr = list.get(list.size() - 1);
+    private void restoreHistory(ArrayList<String> list, FileBackedTasksManager fileBackedTasksManager) {
+        String historyStr = list.get(list.size() - 3);
         List<Integer> iDsOfTasksToBeRestored = CSVTaskFormatter.historyFromString(historyStr);
 
         for (Integer iD : iDsOfTasksToBeRestored) {
@@ -135,6 +303,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
                 bw.newLine();
                 bw.write(CSVTaskFormatter.historyToString(historyManager));
+
+                bw.newLine();
+                bw.newLine();
+                bw.write(startDateTime.format(DATE_TIME_FORMATTER) + ","
+                        + endDaTeTiMe.format(DATE_TIME_FORMATTER) + "," + tempEndTime.format(DATE_TIME_FORMATTER));
             } catch (IOException e) {
                 throw new ManagerSaveException("An error occurred during writing to log file.");
             }
@@ -167,116 +340,78 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public <T extends Task> void put(T t) {
+        if (!(t instanceof Epic)) {
+            if (t.getStartDateTime().equals(LocalDateTime.parse("01.01.0001 00:00", DATE_TIME_FORMATTER))) {
+                incorrectTskImprover(t);
+            }
+
+            if (!isTskValid(t)) {
+                throw new ManagerSaveException(t.getClass().toString() + " " + t.getName()
+                        + " has incorrect time parameters and can't be added.");
+            } else {
+                addToPrioritizedTasks(t);
+            }
+        }
+
         super.put(t);
         save();
     }
 
     @Override
     public <T extends Task> void deleteTopLevelTaskById(int id, T t) {
-        super.deleteTopLevelTaskById(id, t);
-        save();
+        if (tasks.containsKey(id) || epics.containsKey(id)) {
+            restoreTiMeGrid(t);
+
+            if (!(t instanceof Epic)) {
+                prioritizedTasks.remove(t);
+            }
+
+            super.deleteTopLevelTaskById(id, t);
+            save();
+        }
     }
 
     @Override
     public void deleteSubtaskById(int subtaskId) {
-        super.deleteSubtaskById(subtaskId);
-        save();
+
+        if (subtasks.containsKey(subtaskId)) {
+            restoreTiMeGrid(getSubtaskById(subtaskId));
+            prioritizedTasks.remove(getSubtaskById(subtaskId));
+            super.deleteSubtaskById(subtaskId);
+            save();
+        }
     }
 
     @Override
     public <T extends Task> void update(T t) {
+
+        if (!(t instanceof Epic)) {
+            prioritizedTasks.add(t);
+        }
+
         super.update(t);
+        if (t instanceof Epic) {
+            actualizeTimeParametersOfEpc(t.getId());
+        }
+
         save();
     }
 
     @Override
     public <T extends Task> void deleteAllTasksSameKind(T t) {
+        if ((t instanceof Subtask) || (t instanceof Epic)) {
+            for (Subtask subtask : subtasks.values()) {
+                restoreTiMeGrid(subtask);
+                prioritizedTasks.remove(subtask);
+            }
+        } else {
+            for (Task task : tasks.values()) {
+                restoreTiMeGrid(task);
+                prioritizedTasks.remove(task);
+            }
+        }
+
         super.deleteAllTasksSameKind(t);
         save();
-    }
-
-    public static void main(String[] args) {
-        File file = new File("log/log.csv");
-
-        FileBackedTasksManager fileBackedTasksManager1 = new FileBackedTasksManager(file);
-
-        Task task1 = fileBackedTasksManager1.createTask("task1", "1st task");
-        fileBackedTasksManager1.put(task1);
-        Task task2 = fileBackedTasksManager1.createTask("task2", "2d task");
-        fileBackedTasksManager1.put(task2);
-        Epic epic1 = fileBackedTasksManager1.createEpic("epic1", "1st epic");
-        fileBackedTasksManager1.put(epic1);
-        Subtask subtask1 = fileBackedTasksManager1.createSubtask("subtask1", "1st subtask", epic1);
-        fileBackedTasksManager1.put(subtask1);
-        Subtask subtask2 = fileBackedTasksManager1.createSubtask("subtask2", "2d subtask", epic1);
-        fileBackedTasksManager1.put(subtask2);
-        Subtask subtask3 = fileBackedTasksManager1.createSubtask("subtask3", "3rd subtask", epic1);
-        fileBackedTasksManager1.put(subtask3);
-        Epic epic2 = fileBackedTasksManager1.createEpic("epic2", "2d epic");
-        fileBackedTasksManager1.put(epic2);
-
-        fileBackedTasksManager1.getTaskById(task1.getId());
-        fileBackedTasksManager1.getTaskById(task1.getId());
-        fileBackedTasksManager1.getTaskById(task2.getId());
-        fileBackedTasksManager1.getTaskById(task2.getId());
-        fileBackedTasksManager1.getSubtaskById(subtask1.getId());
-        fileBackedTasksManager1.getSubtaskById(subtask2.getId());
-        fileBackedTasksManager1.getSubtaskById(subtask3.getId());
-        fileBackedTasksManager1.getEpicById(epic1.getId());
-        fileBackedTasksManager1.getEpicById(epic2.getId());
-        System.out.println("Initial history is: ");
-        System.out.println(fileBackedTasksManager1.getHistory());
-
-        fileBackedTasksManager1.getTaskById(task1.getId());
-        System.out.println("History after task1 calling is: ");
-        System.out.println(fileBackedTasksManager1.getHistory());
-
-        fileBackedTasksManager1.getTaskById(task2.getId());
-        System.out.println("History after task2 calling is: ");
-        System.out.println(fileBackedTasksManager1.getHistory());
-
-        fileBackedTasksManager1.getSubtaskById(subtask1.getId());
-        System.out.println("History after subtask1 calling is: ");
-        System.out.println(fileBackedTasksManager1.getHistory());
-
-        fileBackedTasksManager1.getSubtaskById(subtask2.getId());
-        System.out.println("History after subtask2 calling is: ");
-        System.out.println(fileBackedTasksManager1.getHistory());
-
-        fileBackedTasksManager1.getSubtaskById(subtask3.getId());
-        System.out.println("History after subtask3 calling is: ");
-        System.out.println(fileBackedTasksManager1.getHistory());
-
-        fileBackedTasksManager1.getEpicById(epic1.getId());
-        System.out.println("History after epic1 calling is: ");
-        System.out.println(fileBackedTasksManager1.getHistory());
-
-        fileBackedTasksManager1.getEpicById(epic2.getId());
-        System.out.println("History after epic2 calling is: ");
-        System.out.println(fileBackedTasksManager1.getHistory());
-
-        System.out.println("Map of tasks for fileBackedTasksManager1 is:");
-        System.out.println(fileBackedTasksManager1.tasks);
-        System.out.println("Map of epics for fileBackedTasksManager1 is:");
-        System.out.println(fileBackedTasksManager1.epics);
-        System.out.println("Map of subtasks for fileBackedTasksManager1 is:");
-        System.out.println(fileBackedTasksManager1.subtasks);
-        System.out.println("History is:");
-        System.out.println(fileBackedTasksManager1.getHistory());
-
-        try {
-            FileBackedTasksManager fileBackedTasksManager2 = FileBackedTasksManager.loadFromFile(file);
-            System.out.println("Map of tasks for fileBackedTasksManager2 is:");
-            System.out.println(fileBackedTasksManager2.tasks);
-            System.out.println("Map of epics for fileBackedTasksManager2 is:");
-            System.out.println(fileBackedTasksManager2.epics);
-            System.out.println("Map of subtasks for fileBackedTasksManager2 is:");
-            System.out.println(fileBackedTasksManager2.subtasks);
-            System.out.println("History is:");
-            System.out.println(fileBackedTasksManager2.getHistory());
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
     }
 }
