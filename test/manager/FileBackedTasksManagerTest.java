@@ -1,6 +1,6 @@
 package manager;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -268,20 +268,27 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         LocalDateTime startDateTime = nowDateTime.minusMinutes(nowDateTime.getMinute()).
                 minusSeconds(nowDateTime.getSecond()).
                 minusNanos(nowDateTime.getNano()).plusHours(24);
+
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
         subtask1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         subtask1.setDuration(15L);
+
         taskManager.put(epic1);
         taskManager.put(subtask1);
         taskManager.updateEpic(epic1);
+
         assertTrue(taskManager.getPrioritizedTasks().size() == 1
                         & taskManager.getPrioritizedTasks().get(0).equals(subtask1),
                 "subtask1 is not present in list of prioritized tasks");
+
         Task task1 = taskManager.createTask("task1", "1st task");
+
         taskManager.put(task1);
+
         LocalDateTime taskStartDateTime = startDateTime.plusMinutes(30);
         task1.setStartTime(taskStartDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+
         assertTrue(taskManager.getPrioritizedTasks().size() == 2
                         & taskManager.getPrioritizedTasks().get(1).equals(task1),
                 "task1 is not present in list of prioritized tasks");
@@ -298,8 +305,11 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         LocalDateTime startDateTime = nowDateTime.minusMinutes(nowDateTime.getMinute()).
                 minusSeconds(nowDateTime.getSecond()).
                 minusNanos(nowDateTime.getNano()).plusHours(24);
+
         Task task = taskManager.createTask("task1", "1st task");
+
         task.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+
         assertEquals(startDateTime, task.getStartDateTime(),
                 "An error occurred while setting start time of task");
         assertDoesNotThrow(() -> task.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER)));
@@ -320,9 +330,13 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         LocalDateTime startDateTime = nowDateTime.minusMinutes(nowDateTime.getMinute()).
                 minusSeconds(nowDateTime.getSecond()).
                 minusNanos(nowDateTime.getNano()).plusHours(24);
+
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
+
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
+
         subtask1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+
         assertEquals(startDateTime, subtask1.getStartDateTime(),
                 "An error occurred during setting start time for subtask1");
         assertDoesNotThrow(() ->
@@ -332,7 +346,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void shouldReturnDateTimeParseExceptionWhileSettingUpIncorrectStartDateTimeForSubtask() {
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
+
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
+
         final DateTimeParseException exception = assertThrows(DateTimeParseException.class, () ->
                 subtask1.setStartTime(""));
 
@@ -345,11 +361,15 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         LocalDateTime startDateTime = nowDateTime.minusMinutes(nowDateTime.getMinute()).
                 minusSeconds(nowDateTime.getSecond()).
                 minusNanos(nowDateTime.getNano()).plusHours(24);
+
         Task task1 = taskManager.createTask("task1", "1st task");
+
         task1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         task1.setDuration(15L);
+
         assertEquals(Duration.ofMinutes(15L), task1.getDuraTion(),
                 "An error occurred while setting duration for task1");
+
         assertDoesNotThrow(() -> task1.setDuration(15L));
     }
 
@@ -359,17 +379,23 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         LocalDateTime startDateTime = nowDateTime.minusMinutes(nowDateTime.getMinute()).
                 minusSeconds(nowDateTime.getSecond()).
                 minusNanos(nowDateTime.getNano()).plusHours(24);
+
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
+
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
+
         subtask1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         subtask1.setDuration(15L);
+
         assertEquals(Duration.ofMinutes(15L), subtask1.getDuraTion(), "Incorrect duration for subtask1");
+
         assertDoesNotThrow(() -> subtask1.setDuration(15L));
     }
 
     @Test
     public void shouldThrowManagerSaveExceptionWhileSettingUpDurationOf10ForTask() {
         Task task = taskManager.createTask("task1", "1st task");
+
         final ManagerSaveException exception = assertThrows(ManagerSaveException.class, () ->
                 task.setDuration(10L));
 
@@ -380,6 +406,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void shouldThrowManagerSaveExceptionWhileSettingUpDurationOfMinus10ForTask() {
         Task task = taskManager.createTask("task1", "1st task");
+
         final ManagerSaveException exception = assertThrows(ManagerSaveException.class, () ->
                 task.setDuration(-15L));
 
@@ -389,7 +416,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void shouldThrowManagerSaveExceptionWhileSettingUpDurationOf10ForSubtask() {
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
+
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
+
         final ManagerSaveException exception = assertThrows(ManagerSaveException.class, () ->
                 subtask1.setDuration(10L));
 
@@ -400,7 +429,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void shouldThrowManagerSaveExceptionWhileSettingUpDurationOfMinus10ForSubtask() {
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
+
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
+
         final ManagerSaveException exception = assertThrows(ManagerSaveException.class, () ->
                 subtask1.setDuration(-15L));
 
@@ -413,32 +444,48 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         LocalDateTime startDateTime = nowDateTime.minusMinutes(nowDateTime.getMinute()).
                 minusSeconds(nowDateTime.getSecond()).
                 minusNanos(nowDateTime.getNano()).plusHours(24);
+
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
         taskManager.put(epic1);
+
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
+
         subtask1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+
         subtask1.setDuration(15L);
+
         taskManager.put(subtask1);
+
+
         Subtask subtask2 = taskManager.createSubtask("subtask2", "2 subtask", epic1);
         subtask2.setStartTime(startDateTime.plusMinutes(30L).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+
         subtask2.setDuration(15L);
+
         taskManager.put(subtask2);
         taskManager.update(epic1);
+
         assertEquals(subtask1.getStartDateTime(), epic1.getStartDateTime(), "Incorrect start time for epic1");
         assertEquals(Duration.ofMinutes(30L), epic1.getDuraTion(), "Incorrect duration for epic1");
         assertEquals(subtask2.getEndTime(), epic1.getEndTime(), "Incorrect end time for epic1");
+
         subtask2.setDuration(0L);
         taskManager.update(epic1);
+
         assertEquals(subtask1.getStartDateTime(), epic1.getStartDateTime(), "Incorrect start time for epic1");
         assertEquals(Duration.ofMinutes(15L), epic1.getDuraTion(), "Incorrect duration for epic1");
         assertEquals(subtask2.getEndTime(), epic1.getEndTime(), "Incorrect end time for epic1");
+
         taskManager.deleteSubtaskById(subtask2.getId());
         taskManager.update(epic1);
+
         assertEquals(subtask1.getStartDateTime(), epic1.getStartDateTime(), "Incorrect start time for epic1");
         assertEquals(Duration.ofMinutes(15L), epic1.getDuraTion(), "Incorrect duration for epic1");
         assertEquals(subtask1.getEndTime(), epic1.getEndTime(), "Incorrect end time for epic1");
+
         Subtask subtask3 = taskManager.createSubtask("subtask3", "3rd subtask", epic1);
         taskManager.put(subtask3);
+
         subtask3.setDuration(15L);
         taskManager.update(epic1);
         assertEquals(subtask3.getEndTime(), epic1.getEndTime(), "Incorrect end time for epic1");
@@ -476,8 +523,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         fileBackedTasksManager1.put(subtask2);
         subtask2.setStartTime(startDateTime.plusMinutes(90).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         subtask2.setDuration(15L);
-        fileBackedTasksManager1.update(epic1);
 
+        fileBackedTasksManager1.update(epic1);
         fileBackedTasksManager1.getTaskById(task2.getId());
         fileBackedTasksManager1.getTaskById(task1.getId());
         fileBackedTasksManager1.getEpicById(epic1.getId());
@@ -497,7 +544,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         assertEquals(fileBackedTasksManager1.getHistory(), fileBackedTasksManager2.getHistory(),
                 "An error occurred while saving to and restoring from log file TreeSet of prioritized tasks");
         Task task3 = fileBackedTasksManager2.createTask("task3", "3rd task");
+
         task3.setDuration(15L);
+
         assertDoesNotThrow(() -> fileBackedTasksManager2.put(task3));
     }
 
@@ -542,8 +591,10 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
                 "An error occurred while saving to and restoring from log file TreeSet of prioritized tasks");
         assertEquals(fileBackedTasksManager1.getHistory(), fileBackedTasksManager2.getHistory(),
                 "An error occurred while saving to and restoring from log file TreeSet of prioritized tasks");
+
         Task task3 = fileBackedTasksManager2.createTask("task3", "3rd task");
         task3.setDuration(15L);
+
         assertDoesNotThrow(() -> fileBackedTasksManager2.put(task3));
 
     }
@@ -585,42 +636,61 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         File file1 = new File("log/nonEmptyTasksAndEmptyHistory.csv");
 
         FileBackedTasksManager fileBackedTasksManager1 = FileBackedTasksManager.loadFromFile(file1);
-        Task task1 = CSVTaskFormatter.
-                fromString("1,TASK,task1,IN_PROGRESS,1st task,20.03.2023 10:00,15,20.03.2023 10:15, ");
-        Task task2 = CSVTaskFormatter.
-                fromString("2,TASK,task2,DONE,2d task,20.03.2023 10:30,15,20.03.2023 10:45, ");
-        Subtask subtask1 = (Subtask) CSVTaskFormatter.
-                fromString("4,SUBTASK,subtask1,IN_PROGRESS,1st subtask,20.03.2023 11:00,15,20.03.2023 11:15,3");
-        Subtask subtask2 = (Subtask) CSVTaskFormatter.
-                fromString("5,SUBTASK,subtask2,NEW,2d subtask,20.03.2023 11:30,15,20.03.2023 11:45,3");
 
-        assertTrue(fileBackedTasksManager1.tasks.containsValue(task1),
-                "An error occurred during restoring of task1 from log file");
-        assertTrue(fileBackedTasksManager1.tasks.containsValue(task2),
-                "An error occurred during restoring of task2 from log file");
-        assertEquals(2, fileBackedTasksManager1.tasks.size(),
+        Task task3 = CSVTaskFormatter.
+                fromString("7,TASK,task3,IN_PROGRESS,3rd task,20.04.2023 10:00,15,20.04.2023 10:15, ");
+
+        assert task3 != null;
+
+        fileBackedTasksManager1.tasks.put(task3.getId(), task3);
+
+        Task task4 = CSVTaskFormatter.
+                fromString("8,TASK,task4,DONE,4th task,20.04.2023 10:30,15,20.04.2023 10:45, ");
+
+        assert task4 != null;
+
+        fileBackedTasksManager1.tasks.put(task4.getId(), task4);
+
+        Subtask subtask3 = (Subtask) CSVTaskFormatter.
+                fromString("9,SUBTASK,subtask3,IN_PROGRESS,3rd subtask,20.04.2023 11:00,15,20.04.2023 11:15,3");
+
+        assert subtask3 != null;
+
+        fileBackedTasksManager1.subtasks.put(subtask3.getId(), subtask3);
+
+        Subtask subtask4 = (Subtask) CSVTaskFormatter.
+                fromString("10,SUBTASK,subtask4,NEW,4th subtask,20.04.2023 11:30,15,20.04.2023 11:45,3");
+
+        assert subtask4 != null;
+
+        fileBackedTasksManager1.subtasks.put(subtask4.getId(), subtask4);
+
+        assertTrue(fileBackedTasksManager1.tasks.containsValue(task3),
+                "An error occurred during restoring of task3 from log file");
+        assertTrue(fileBackedTasksManager1.tasks.containsValue(task4),
+                "An error occurred during restoring of task4 from log file");
+        assertEquals(4, fileBackedTasksManager1.tasks.size(),
                 "An error occurred during maps of tasks restoring");
-        assertTrue(fileBackedTasksManager1.subtasks.containsValue(subtask1),
+        assertTrue(fileBackedTasksManager1.subtasks.containsValue(subtask3),
+                "An error occurred during restoring of subtask3 from log file");
+        assertTrue(fileBackedTasksManager1.subtasks.containsValue(subtask3),
                 "An error occurred during restoring of subtask1 from log file");
-        assertTrue(fileBackedTasksManager1.subtasks.containsValue(subtask2),
-                "An error occurred during restoring of subtask1 from log file");
-        assertEquals(2, fileBackedTasksManager1.subtasks.size(),
+        assertEquals(4, fileBackedTasksManager1.subtasks.size(),
                 "An error occurred during maps of subtasks restoring");
 
-        Epic epic1 = (Epic) CSVTaskFormatter.
-                fromString("3,EPIC,epic1,IN_PROGRESS,1st epic,20.03.2023 11:00,30,20.03.2023 11:45, ");
+        Epic epic2 = (Epic) CSVTaskFormatter.
+                fromString("11,EPIC,epic2,IN_PROGRESS,2d epic,20.04.2023 11:00,30,20.04.2023 11:45, ");
 
-        assert epic1 != null;
-        assert subtask1 != null;
-        epic1.attachSubtaskToEpic(subtask1.getId());
-        assert subtask2 != null;
-        epic1.attachSubtaskToEpic(subtask2.getId());
+        assert epic2 != null;
 
-        assertTrue(fileBackedTasksManager1.epics.containsValue(epic1),
+        fileBackedTasksManager1.epics.put(epic2.getId(), epic2);
+        epic2.attachSubtaskToEpic(subtask3.getId());
+        epic2.attachSubtaskToEpic(subtask4.getId());
+
+        assertTrue(fileBackedTasksManager1.epics.containsValue(epic2),
                 "An error occurred during restoring of epic1 from log file");
-        assertEquals(1, fileBackedTasksManager1.epics.size(),
+        assertEquals(2, fileBackedTasksManager1.epics.size(),
                 "An error occurred during maps of epics restoring");
-
         assertTrue(fileBackedTasksManager1.getHistory().isEmpty(),
                 "An error occurred while restoring history from log file");
     }
@@ -628,6 +698,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void shouldThrowManagerSaveExceptionWhileRestoringLogWithHistoryAndWithoutTasks() {
         File file2 = new File("log/emptyTasksAndNonEmptyHistory.csv");
+
         final ManagerSaveException exception = assertThrows(ManagerSaveException.class, () ->
                 FileBackedTasksManager.loadFromFile(file2));
         assertEquals("Ann error occurred while restoring from log file", exception.getMessage());

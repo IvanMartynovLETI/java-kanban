@@ -30,7 +30,6 @@ public class CSVTaskFormatterTest {
                 minusSeconds(nowDateTime.getSecond()).
                 minusNanos(nowDateTime.getNano()).plusHours(24);
 
-
         Task task1 = fileBackedTasksManager.createTask("task1", "1st task");
         task1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         task1.setDuration(duration);
@@ -110,7 +109,7 @@ public class CSVTaskFormatterTest {
 
     @Test
     public void shouldRestoreTaskFromString() {
-        String taskStr = "1,TASK,task1,IN_PROGRESS,1st task,20.03.2023 10:00,15,20.03.2023 10:15, ";
+        String taskStr = "1,TASK,task1,IN_PROGRESS,1st task,20.04.2023 10:00,15,20.04.2023 10:15, ";
         String[] elements = taskStr.split(",");
         Task task1 = CSVTaskFormatter.fromString(taskStr);
 
@@ -130,7 +129,7 @@ public class CSVTaskFormatterTest {
 
     @Test
     public void shouldRestoreSubtaskFromString() {
-        String taskStr = "2,SUBTASK,subtask1,NEW,1st subtask,20.03.2023 19:00,15,20.03.2023 19:15,1";
+        String taskStr = "2,SUBTASK,subtask1,NEW,1st subtask,20.04.2023 19:00,15,20.04.2023 19:15,1";
         String[] elements = taskStr.split(",");
         Subtask subtask1 = (Subtask) CSVTaskFormatter.fromString(taskStr);
 
