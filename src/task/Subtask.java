@@ -5,7 +5,7 @@ import manager.FileBackedTasksManager;
 import java.util.Objects;
 
 public class Subtask extends Task {
-    private final int upperEpcId;
+    public int upperEpcId;
 
     public Subtask(int subtaskId, String subtaskName, String subtaskDescription, Epic upperEpc) {
         super(subtaskId, subtaskName, subtaskDescription);
@@ -23,8 +23,8 @@ public class Subtask extends Task {
                 ", SubtaskName='" + name + '\'' +
                 ", SubtaskDescription='" + description + '\'' +
                 ", SubtaskStatus='" + status + '\'' +
-                ", upperEpcId='" + upperEpcId + '\'' +
-                ", setStartTime='" + setStartTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
+                ", upperEpcId=" + upperEpcId +
+                ", startTime='" + startTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
                 ", duration='" + duration.toMinutes() + '\'' +
                 ", endTime='" + endTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
                 '}';

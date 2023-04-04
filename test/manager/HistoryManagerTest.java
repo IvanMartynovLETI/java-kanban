@@ -13,9 +13,9 @@ public abstract class HistoryManagerTest<T extends HistoryManager> {
     protected Task task2;
     protected Task task3;
 
-    public HistoryManagerTest(T historyManager) {
+    public HistoryManagerTest(T historyManager, InMemoryTaskManager inMemoryTaskManager) {
         this.historyManager = historyManager;
-        this.inMemoryTaskManager = (InMemoryTaskManager) Managers.getDefault();
+        this.inMemoryTaskManager = /*(InMemoryTaskManager) Managers.getDefault()*/inMemoryTaskManager;
         this.task1 = inMemoryTaskManager.createTask("task1", "1st task");
         this.task2 = inMemoryTaskManager.createTask("task2", "2d task");
         this.task3 = inMemoryTaskManager.createTask("task3", "3rd task");

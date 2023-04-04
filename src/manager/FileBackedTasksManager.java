@@ -15,27 +15,27 @@ import java.util.*;
 
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final File file;
-    private final HashMap<LocalDateTime, Boolean> gridOfTiMes = new HashMap<>();
+    protected final File file;
+    protected final HashMap<LocalDateTime, Boolean> gridOfTiMes = new HashMap<>();
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     public static final Long GRID_TIME_SPACE = 15L;//шаг временнОй сетки планирования задач, минут
-    private LocalDateTime startDateTimeOfUnusualTsk; //задачи с пропущенным временем начала планировщик будет
-                                                     //помещать на конец года, каждая новая такая задача будет
-                                                     //сдвигаться к началу года.
+    protected LocalDateTime startDateTimeOfUnusualTsk; //задачи с пропущенным временем начала планировщик будет
+    //помещать на конец года, каждая новая такая задача будет
+    //сдвигаться к началу года.
 
-    private LocalDateTime tempEndTime;
-    private static final LocalDateTime nowDateTime = LocalDateTime.now();
+    protected LocalDateTime tempEndTime;
+    protected static final LocalDateTime nowDateTime = LocalDateTime.now();
     public static final LocalDateTime startDateTime = nowDateTime.//Начальная точка временнОй шкалы
             minusHours(nowDateTime.getHour()).                    //планирования задач (период планирования
             minusMinutes(nowDateTime.getMinute()).                //-год).
             minusSeconds(nowDateTime.getSecond()).
             minusNanos(nowDateTime.getNano()).plusDays(1);
 
-    private static final LocalDateTime endDaTeTiMe = startDateTime.plusYears(1L); //Конечная точка временнОй шкалы
-                                                                                  // планирования задач.
-    private final Comparator<Task> comparator = Comparator.comparing(Task::getStartDateTime);
+    protected static final LocalDateTime endDaTeTiMe = startDateTime.plusYears(1L); //Конечная точка временнОй шкалы
+    // планирования задач.
+    protected final Comparator<Task> comparator = Comparator.comparing(Task::getStartDateTime);
 
-    private final Set<Task> prioritizedTasks = new TreeSet<>(comparator);
+    protected final Set<Task> prioritizedTasks = new TreeSet<>(comparator);
 
     public FileBackedTasksManager(File file) {
         super();
@@ -45,7 +45,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fillTiMeGrid();
     }
 
-    private <T extends Task> void addToPrioritizedTasks(T t) {
+    protected <T extends Task> void addToPrioritizedTasks(T t) {
 
         for (LocalDateTime dtm = t.getStartDateTime(); dtm.isBefore(t.getEndTime().plusMinutes(GRID_TIME_SPACE));
              dtm = dtm.plusMinutes(GRID_TIME_SPACE)) {
@@ -59,14 +59,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return new ArrayList<>(prioritizedTasks);
     }
 
-    private void fillTiMeGrid() {
+    protected void fillTiMeGrid() {
         for (LocalDateTime dtm = startDateTime; dtm.isBefore(endDaTeTiMe.plusMinutes(GRID_TIME_SPACE));
              dtm = dtm.plusMinutes(GRID_TIME_SPACE)) {
             gridOfTiMes.put(dtm, true);
         }
     }
 
-    private void fillTiMeGridFromEndStringOfFile(List<String> listOfStrings) {
+    protected void fillTiMeGridFromEndStringOfFile(List<String> listOfStrings) {
         String[] elements = listOfStrings.get(listOfStrings.size() - 1).split(",");
 
         for (LocalDateTime ldm = LocalDateTime.parse(elements[0], DATE_TIME_FORMATTER);
@@ -76,12 +76,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private LocalDateTime restoreTempEndTimeFromListOfStrings(List<String> listOfStrings) {
+    protected LocalDateTime restoreTempEndTimeFromListOfStrings(List<String> listOfStrings) {
         String[] elements = listOfStrings.get(listOfStrings.size() - 1).split(",");
         return LocalDateTime.parse(elements[2], DATE_TIME_FORMATTER);
     }
 
-    private void restoreTiMeGrid(Task task) {
+    protected void restoreTiMeGrid(Task task) {
         if (!(task instanceof Epic)) {
             for (LocalDateTime ldm = task.getStartDateTime();
                  ldm.isBefore(task.getEndTime().plusMinutes(GRID_TIME_SPACE));
@@ -91,7 +91,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private boolean isTskValid(Task task) {
+    protected boolean isTskValid(Task task) {
 
         for (LocalDateTime dtm = task.getStartDateTime(); dtm.isBefore(task.getEndTime().plusMinutes(GRID_TIME_SPACE));
              dtm = dtm.plusMinutes(GRID_TIME_SPACE)) {
@@ -103,7 +103,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return true;
     }
 
-    private <T extends Task> void incorrectTskImprover(T t) {
+    protected  <T extends Task> void incorrectTskImprover(T t) {
         if (!(t instanceof Epic)) {
             t.setStartTime((tempEndTime.minusMinutes(t.getDuraTion().toMinutes()))
                     .format(FileBackedTasksManager.DATE_TIME_FORMATTER));
@@ -113,7 +113,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private void actualizeTimeParametersOfEpc(int epicId) {
+    protected void actualizeTimeParametersOfEpc(int epicId) {
         ArrayList<Integer> iDsOfAttachedSubtsks = epics.get(epicId).getSubTaskIds();
         LocalDateTime minStartTime = LocalDateTime.parse("01.01.0001 00:00", DATE_TIME_FORMATTER);
         LocalDateTime maxEndTime = LocalDateTime.parse("01.01.0001 00:00", DATE_TIME_FORMATTER);
@@ -181,7 +181,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return fileBackedTasksManager;
     }
 
-    private boolean hasAnyKindOfTask(ArrayList<String> listOfStrings) {
+    protected boolean hasAnyKindOfTask(ArrayList<String> listOfStrings) {
         boolean isContainsAnyKindOfTask = true;
         if (listOfStrings.isEmpty()) {
             isContainsAnyKindOfTask = false;
@@ -203,7 +203,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return isContainsAnyKindOfTask;
     }
 
-    private int getMaxId(ArrayList<String> listOfStrings) {
+    protected int getMaxId(ArrayList<String> listOfStrings) {
         int maxId = 0;
         String[] taskElements;
 
@@ -219,7 +219,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return maxId;
     }
 
-    private void fillMaps(ArrayList<String> list, FileBackedTasksManager fileBackedTasksManager) {
+    protected void fillMaps(ArrayList<String> list, FileBackedTasksManager fileBackedTasksManager) {
         String[] taskElements;
 
         for (int line = 1; line < list.size() - 4; line++) {
@@ -247,7 +247,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private void attachSubtasksToEpics(FileBackedTasksManager fileBackedTasksManager) {
+    protected void attachSubtasksToEpics(FileBackedTasksManager fileBackedTasksManager) {
 
         for (Subtask subtask : fileBackedTasksManager.subtasks.values()) {
             Epic tempEpic = fileBackedTasksManager.epics.get(subtask.getUpperEpicId());
@@ -259,10 +259,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         for (Epic epic : fileBackedTasksManager.epics.values()) {
             actualizeTimeParametersOfEpc(epic.getId());
         }
-
     }
 
-    private void restoreHistory(ArrayList<String> list, FileBackedTasksManager fileBackedTasksManager) {
+    protected void restoreHistory(ArrayList<String> list, FileBackedTasksManager fileBackedTasksManager) {
         String historyStr = list.get(list.size() - 3);
         List<Integer> iDsOfTasksToBeRestored = CSVTaskFormatter.historyFromString(historyStr);
 
@@ -277,7 +276,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private void save() throws ManagerSaveException {
+    protected void save() throws ManagerSaveException {
         if (!file.isFile()) {//если лога еще нет, его нужно создать
             try {
                 Files.createFile(Path.of(file.toString()));

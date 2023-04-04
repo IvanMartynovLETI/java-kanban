@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private final ArrayList<Integer> subTaskIds;
+    public ArrayList<Integer> subTaskIds;
 
     public Epic(int epicId, String epicName, String epicDescription) {
         super(epicId, epicName, epicDescription);
@@ -35,12 +35,12 @@ public class Epic extends Task {
     public void setStartTime(String setStartTime) {
         LocalDateTime ldtm = LocalDateTime.parse(setStartTime, FileBackedTasksManager.DATE_TIME_FORMATTER);
 
-        if (this.setStartTime.getMinute() % FileBackedTasksManager.GRID_TIME_SPACE != 0) {
+        if (this.startTime.getMinute() % FileBackedTasksManager.GRID_TIME_SPACE != 0) {
             throw new ManagerSaveException("Start time should be exactly divisible by "
                     + FileBackedTasksManager.startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + ".");
         }
 
-        this.setStartTime = ldtm;
+        this.startTime = ldtm;
 
         if (this.duration.toMinutes() != 0) {
             setEndTime();
@@ -55,7 +55,7 @@ public class Epic extends Task {
                 ", epicDescription='" + description + '\'' +
                 ", epicStatus='" + status + '\'' +
                 ", SubTaskIds=" + subTaskIds +
-                ", setStartTime='" + setStartTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
+                ", startTime='" + startTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
                 ", duration='" + duration.toMinutes() + '\'' +
                 ", endTime='" + endTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
                 '}';

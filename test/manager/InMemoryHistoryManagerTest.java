@@ -2,10 +2,12 @@ package manager;
 
 import org.junit.Test;
 
+import java.io.File;
+
 public class InMemoryHistoryManagerTest extends HistoryManagerTest<HistoryManager> {
 
     public InMemoryHistoryManagerTest() {
-        super(Managers.getDefaultHistory());
+        super(Managers.getDefaultHistory(), new FileBackedTasksManager(new File("log/log.csv")));
     }
 
     //tests for methods from HistoryManager interface

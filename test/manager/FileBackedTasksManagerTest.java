@@ -14,11 +14,12 @@ import java.time.format.DateTimeParseException;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
+public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
 
-    public FileBackedTasksManagerTest() {
-        super(new FileBackedTasksManager(new File("log/log.csv")));
+    public FileBackedTasksManagerTest(FileBackedTasksManager fileBackedTasksManager) {
+        super(fileBackedTasksManager);
     }
+
 
     //Tests for methods from TaskManager interface
     @Test

@@ -9,26 +9,26 @@ import java.util.Objects;
 import java.time.LocalDateTime;
 
 public class Task {
-    protected int id;
-    protected String name;
-    protected String description;
-    protected Status status;
-    protected LocalDateTime setStartTime;
-    protected Duration duration;
-    protected LocalDateTime endTime;
+    public int id;
+    public String name;
+    public String description;
+    public Status status;
+    public LocalDateTime startTime;
+    public Duration duration;
+    public LocalDateTime endTime;
 
     public Task(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
-        this.setStartTime = LocalDateTime.parse("01.01.0001 00:00", FileBackedTasksManager.DATE_TIME_FORMATTER);
+        this.startTime = LocalDateTime.parse("01.01.0001 00:00", FileBackedTasksManager.DATE_TIME_FORMATTER);
         this.duration = Duration.ofMinutes(0);
-        this.endTime = setStartTime;
+        this.endTime = startTime;
     }
 
     public LocalDateTime getStartDateTime() {
-        return this.setStartTime;
+        return this.startTime;
     }
 
     public void setStartTime(String setStartTime) {
@@ -39,12 +39,12 @@ public class Task {
                     + ". Start time should be after than " + FileBackedTasksManager.startDateTime);
         }
 
-        if (this.setStartTime.getMinute() % FileBackedTasksManager.GRID_TIME_SPACE != 0) {
+        if (this.startTime.getMinute() % FileBackedTasksManager.GRID_TIME_SPACE != 0) {
             throw new ManagerSaveException("Start time should be exactly divisible by "
                     + FileBackedTasksManager.startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + ".");
         }
 
-        this.setStartTime = ldtm;
+        this.startTime = ldtm;
 
         if (this.duration.toMinutes() != 0) {
             setEndTime();
@@ -56,7 +56,7 @@ public class Task {
     }
 
     public void setEndTime() {
-        this.endTime = this.setStartTime.plus(this.duration);
+        this.endTime = this.startTime.plus(this.duration);
     }
 
     public Duration getDuraTion() {
@@ -77,7 +77,7 @@ public class Task {
 
         this.duration = Duration.ofMinutes(duration);
 
-        if (!this.setStartTime.equals(LocalDateTime.parse("01.01.0001 00:00",
+        if (!this.startTime.equals(LocalDateTime.parse("01.01.0001 00:00",
                 FileBackedTasksManager.DATE_TIME_FORMATTER))) {
             setEndTime();
         }
@@ -110,7 +110,7 @@ public class Task {
                 ", taskName='" + name + '\'' +
                 ", taskDescription='" + description + '\'' +
                 ", taskStatus='" + status + '\'' +
-                ", setStartTime='" + setStartTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
+                ", startTime='" + startTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
                 ", duration='" + duration.toMinutes() + '\'' +
                 ", endTime='" + endTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
                 '}';
@@ -127,13 +127,13 @@ public class Task {
 
         Task task = (Task) o;
         return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description)
-                && status == task.status && Objects.equals(setStartTime, task.setStartTime)
+                && status == task.status && Objects.equals(startTime, task.startTime)
                 && Objects.equals(duration, task.duration) && Objects.equals(endTime, task.endTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, status, setStartTime, duration, endTime);
+        return Objects.hash(id, name, description, status, startTime, duration, endTime);
     }
 
     public Integer getEpicId() {
