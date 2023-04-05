@@ -17,7 +17,7 @@ import java.util.List;
 
 public class HttpTaskManager extends FileBackedTasksManager{
     private final KVTaskClient client;
-    private final static String keyForLoadSave = "heap";
+    private final static String keyForLoadSave = "HEAP";
     protected static Gson gson;
 
     public HttpTaskManager(URL url) {
@@ -85,6 +85,6 @@ public class HttpTaskManager extends FileBackedTasksManager{
         allInOne.append(",");
         allInOne.append(tempEndTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
 
-        client.put("heap", gson.toJson(allInOne.toString()));
+        client.put("HEAP", gson.toJson(allInOne.toString()));
     }
 }

@@ -536,7 +536,7 @@ public class HttpTaskManagerTest extends FileBackedTasksManagerTest{
         try {
 
             KVTaskClient client = new KVTaskClient(new URL("http://localhost:8078"));
-            client.put("heap", nonEmptyMapsAndEmptyHistory);
+            client.put("HEAP", nonEmptyMapsAndEmptyHistory);
 
             HttpTaskManager httpTaskManager = HttpTaskManager.load(new URL("http://localhost:8078"));
 
@@ -602,7 +602,7 @@ public class HttpTaskManagerTest extends FileBackedTasksManagerTest{
         try {
 
             KVTaskClient client = new KVTaskClient(new URL("http://localhost:8078"));
-            client.put("heap", emptyMapsAndNonEmptyHistory);
+            client.put("HEAP", emptyMapsAndNonEmptyHistory);
 
             final ManagerSaveException exception = assertThrows(ManagerSaveException.class, () ->
                     HttpTaskManager.load(new URL("http://localhost:8078")));
