@@ -1,4 +1,4 @@
-id,type,name,status,description,setStartDateTime,duration,endDateTime,epic
+id,type,name,status,description,startDateTime,duration,endDateTime,epic
 1,TASK,task1,NEW,1st task,10.04.2024 00:00,0,10.04.2024 00:00, 
 2,TASK,task2,NEW,2d task,09.04.2024 23:45,0,09.04.2024 23:45, 
 3,TASK,task3,NEW,3rd task,09.04.2024 23:30,0,09.04.2024 23:30, 

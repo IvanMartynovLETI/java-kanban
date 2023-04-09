@@ -1,4 +1,4 @@
-id,type,name,status,description,setStartDateTime,duration,endDateTime,epic
+id,type,name,status,description,startDateTime,duration,endDateTime,epic
 2,1,3,5,4
 
 20.03.2023 00:00,20.03.2024 00:00,19.03.2024 22:30

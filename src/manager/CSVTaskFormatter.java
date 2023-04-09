@@ -106,6 +106,6 @@ public class CSVTaskFormatter {
     }
 
     public static String getHeader() {
-        return "id,type,name,status,description,setStartDateTime,duration,endDateTime,epic\n";
+        return "id,type,name,status,description,startDateTime,duration,endDateTime,epic\n";
     }
 }
