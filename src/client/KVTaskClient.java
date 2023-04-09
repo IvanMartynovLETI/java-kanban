@@ -27,7 +27,6 @@ public class KVTaskClient {
         }
     }
 
-
     public void put(String key, String json) {
         URI uriToSave = URI.create(uri + "/save/" + key + "?API_TOKEN=" + authKey);
         HttpRequest request = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(json,

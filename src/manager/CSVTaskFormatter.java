@@ -22,7 +22,8 @@ public class CSVTaskFormatter {
         String taskStr = t.getId() + "," + taskType + "," + t.getName() + "," + t.getStatus() + ","
                 + t.getDescription() + ","
                 + t.getStartDateTime().format(FileBackedTasksManager.DATE_TIME_FORMATTER) + ","
-                + t.getDuraTion().toMinutes() + "," + t.getEndTime().format(FileBackedTasksManager.DATE_TIME_FORMATTER)
+                + t.getDuraTion().toMinutes() + "," + t.getEndDateTime().format(FileBackedTasksManager.
+                DATE_TIME_FORMATTER)
                 + ",";
         if (t.getEpicId() == 0) {
             taskStr += " \r\n";
@@ -52,17 +53,17 @@ public class CSVTaskFormatter {
             case TASK -> {
                 Task restoredTask = new Task(id, name, description);
                 restoredTask.setStatus(status);
-                restoredTask.setStartTime(descriptors[5]);
+                restoredTask.setStartDateTime(descriptors[5]);
                 restoredTask.setDuration(Long.parseLong(descriptors[6]));
-                restoredTask.setEndTime();
+                restoredTask.setEndDateTime();
                 return restoredTask;
             }
             case EPIC -> {
                 Epic restoredEpic = new Epic(id, name, description);
                 restoredEpic.setStatus(status);
-                restoredEpic.setStartTime(descriptors[5]);
+                restoredEpic.setStartDateTime(descriptors[5]);
                 restoredEpic.setDuration(Long.parseLong(descriptors[6]));
-                restoredEpic.setEndTime(descriptors[7]);
+                restoredEpic.setEndDateTime(descriptors[7]);
                 return restoredEpic;
             }
             case SUBTASK -> {
@@ -70,9 +71,9 @@ public class CSVTaskFormatter {
                 Subtask restoredSubtask = new Subtask(id, name, description,
                         new Epic(upperEpcId, "", ""));
                 restoredSubtask.setStatus(status);
-                restoredSubtask.setStartTime(descriptors[5]);
+                restoredSubtask.setStartDateTime(descriptors[5]);
                 restoredSubtask.setDuration(Long.parseLong(descriptors[6]));
-                restoredSubtask.setEndTime();
+                restoredSubtask.setEndDateTime();
                 return restoredSubtask;
             }
             default -> {
@@ -105,6 +106,6 @@ public class CSVTaskFormatter {
     }
 
     public static String getHeader() {
-        return "id,type,name,status,description,setStartTime,duration,endTime,epic\n";
+        return "id,type,name,status,description,setStartDateTime,duration,endDateTime,epic\n";
     }
 }

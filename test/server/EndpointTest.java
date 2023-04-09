@@ -31,7 +31,7 @@ public class EndpointTest {
     private static KVServer kvServer;
     private static HttpTaskServer httpTaskServer;
     private static HttpClient client;
-    private static URL urlToHttpTaskServer;
+    private static URL urlForHttpTaskServer;
     private static URL urlForTasksOperation;
     private static URL urlForSubtasksOperation;
     private static URL urlForEpicsOperation;
@@ -49,7 +49,7 @@ public class EndpointTest {
 
         try {
 
-            urlToHttpTaskServer = new URL ("http://localhost:8081");
+            urlForHttpTaskServer = new URL ("http://localhost:8081");
             urlForTasksOperation = new URL ("http://localhost:8081/tasks/task/");
             urlForSubtasksOperation = new URL ("http://localhost:8081/tasks/subtask/");
             urlForEpicsOperation = new URL ("http://localhost:8081/tasks/epic/");
@@ -149,10 +149,10 @@ public class EndpointTest {
 
         System.out.println("shouldReturnCode201WhileCreateNewTask test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartTime("01.08.2023 12:00");
+        task1.setStartDateTime("01.08.2023 12:00");
         task1.setDuration(15L);
 
         HttpRequest request = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.toJson(task1),
@@ -177,10 +177,10 @@ public class EndpointTest {
 
         System.out.println("shouldReturnTask test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartTime("01.08.2023 12:00");
+        task1.setStartDateTime("01.08.2023 12:00");
         task1.setDuration(15L);
 
         HttpRequest taskCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.
@@ -217,10 +217,10 @@ public class EndpointTest {
 
         System.out.println("shouldDeleteTask test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartTime("01.08.2023 12:00");
+        task1.setStartDateTime("01.08.2023 12:00");
         task1.setDuration(15L);
 
         HttpRequest taskCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -260,14 +260,14 @@ public class EndpointTest {
 
         System.out.println("shouldReturnListOfTasks test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartTime("01.08.2023 12:00");
+        task1.setStartDateTime("01.08.2023 12:00");
         task1.setDuration(15L);
 
         Task task2 = taskManager.createTask("task2", "2d task");
-        task2.setStartTime("01.08.2023 12:30");
+        task2.setStartDateTime("01.08.2023 12:30");
         task2.setDuration(15L);
 
         HttpRequest task1CreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -305,14 +305,14 @@ public class EndpointTest {
 
         System.out.println("shouldDeleteAllTasksPreviouslyCreated test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartTime("01.08.2023 12:00");
+        task1.setStartDateTime("01.08.2023 12:00");
         task1.setDuration(15L);
 
         Task task2 = taskManager.createTask("task2", "2d task");
-        task2.setStartTime("01.08.2023 12:30");
+        task2.setStartDateTime("01.08.2023 12:30");
         task2.setDuration(15L);
 
         HttpRequest taskCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -359,10 +359,10 @@ public class EndpointTest {
 
         System.out.println("shouldUpdateTask test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartTime("01.08.2023 12:00");
+        task1.setStartDateTime("01.08.2023 12:00");
         task1.setDuration(15L);
 
         HttpRequest taskCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -384,7 +384,8 @@ public class EndpointTest {
 
             Task restoredTask = gson.fromJson(taskGetResponse.body(), Task.class);
 
-            Assertions.assertEquals(restoredTask.status, Status.IN_PROGRESS, "An error occurred while task restoring.");
+            Assertions.assertEquals(restoredTask.getStatus(), Status.IN_PROGRESS,
+                    "An error occurred while task restoring.");
 
         } catch (IOException | InterruptedException | NullPointerException e) {
             assertEquals(1, 0,
@@ -458,7 +459,7 @@ public class EndpointTest {
 
         System.out.println("shouldCreateNewEpic test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         HttpRequest request = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.toJson(epic1),
@@ -483,7 +484,7 @@ public class EndpointTest {
 
         System.out.println("shouldReturnEpic test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
 
@@ -517,7 +518,7 @@ public class EndpointTest {
 
         System.out.println("shouldDeleteEpic test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         HttpRequest taskCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -556,7 +557,7 @@ public class EndpointTest {
 
         System.out.println("shouldReturnListOfEpics test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
         Epic epic2 = taskManager.createEpic("epic2", "2d epic");
 
@@ -595,7 +596,7 @@ public class EndpointTest {
 
         System.out.println("shouldDeleteAllEpicsPreviouslyCreated test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         HttpRequest taskCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -644,12 +645,12 @@ public class EndpointTest {
 
         System.out.println("shouldUpdateEpic test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartTime("01.08.2023 13:00");
+        subtask1.setStartDateTime("01.08.2023 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epicCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -678,7 +679,7 @@ public class EndpointTest {
 
             Epic restoredEpic = gson.fromJson(epic1GetResponse.body(), Epic.class);
 
-            assertEquals(restoredEpic.duration, Duration.ofMinutes(15L), "An error occurred while epic" +
+            assertEquals(restoredEpic.getDuraTion(), Duration.ofMinutes(15L), "An error occurred while epic" +
                     " restoring.");
 
         } catch (IOException | InterruptedException | NullPointerException e) {
@@ -754,12 +755,12 @@ public class EndpointTest {
 
         System.out.println("shouldReturnCode201WhileCreateNewSubtask test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartTime("01.08.2023 13:00");
+        subtask1.setStartDateTime("01.08.2023 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epicCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -792,12 +793,12 @@ public class EndpointTest {
 
         System.out.println("shouldReturnSubtask test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartTime("01.08.2023 13:00");
+        subtask1.setStartDateTime("01.08.2023 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epic1CreateRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -833,12 +834,12 @@ public class EndpointTest {
 
         System.out.println("shouldDeleteSubtask test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartTime("01.08.2023 13:00");
+        subtask1.setStartDateTime("01.08.2023 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epic1CreateRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -878,16 +879,16 @@ public class EndpointTest {
 
         System.out.println("shouldReturnListOfSubtasks test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartTime("01.08.2023 13:00");
+        subtask1.setStartDateTime("01.08.2023 13:00");
         subtask1.setDuration(15L);
 
         Subtask subtask2 = taskManager.createSubtask("subtask2", "2d subtask", epic1);
-        subtask2.setStartTime("01.08.2023 13:30");
+        subtask2.setStartDateTime("01.08.2023 13:30");
         subtask2.setDuration(15L);
 
         HttpRequest epic1CreateRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -899,8 +900,8 @@ public class EndpointTest {
                 ofString(gson.toJson(subtask2), StandardCharsets.UTF_8)).uri(URI.create(urlForSubtasksOperation.
                 toString())).build();
 
-        HttpRequest taskGetRequest = HttpRequest.newBuilder().GET().uri(URI.create(urlForSubtasksOperation.toString())).
-                build();
+        HttpRequest taskGetRequest = HttpRequest.newBuilder().GET().uri(URI.create(urlForSubtasksOperation.
+                toString())).build();
 
         HttpResponse<String> taskGetResponse;
 
@@ -931,16 +932,16 @@ public class EndpointTest {
 
         System.out.println("shouldDeleteAllSubtasksPreviouslyCreated test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartTime("01.08.2023 13:00");
+        subtask1.setStartDateTime("01.08.2023 13:00");
         subtask1.setDuration(15L);
 
         Subtask subtask2 = taskManager.createSubtask("subtask2", "2d subtask", epic1);
-        subtask2.setStartTime("01.08.2023 13:30");
+        subtask2.setStartDateTime("01.08.2023 13:30");
         subtask2.setDuration(15L);
 
         HttpRequest epic1CreateRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -987,12 +988,12 @@ public class EndpointTest {
 
         System.out.println("shouldUpdateSubtask test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartTime("01.08.2023 13:00");
+        subtask1.setStartDateTime("01.08.2023 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epic1CreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -1018,7 +1019,7 @@ public class EndpointTest {
 
             Subtask restoredSubtask = gson.fromJson(subtask1GetResponse.body(), Subtask.class);
 
-            assertEquals(restoredSubtask.status, Status.IN_PROGRESS, "An error occurred while subtask" +
+            assertEquals(restoredSubtask.getStatus(), Status.IN_PROGRESS, "An error occurred while subtask" +
                     " restoring.");
 
         } catch (IOException | InterruptedException | NullPointerException e) {
@@ -1033,12 +1034,12 @@ public class EndpointTest {
 
         System.out.println("shouldReturnCode400WhileAttemptingIncorrectUpdateOfSubtask test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartTime("01.08.2023 13:00");
+        subtask1.setStartDateTime("01.08.2023 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epic1CreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -1075,12 +1076,12 @@ public class EndpointTest {
 
         System.out.println("shouldReturnCode400WhileAttemptingIncorrectUpdateOfSubtask test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartTime("01.08.2023 13:00");
+        subtask1.setStartDateTime("01.08.2023 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epic1CreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -1163,14 +1164,14 @@ public class EndpointTest {
 
         System.out.println("shouldReturnListOfPrioritizedTasks test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartTime("01.08.2023 12:00");
+        task1.setStartDateTime("01.08.2023 12:00");
         task1.setDuration(15L);
 
         Task task2 = taskManager.createTask("task2", "2d task");
-        task2.setStartTime("01.08.2023 12:30");
+        task2.setStartDateTime("01.08.2023 12:30");
         task2.setDuration(15L);
 
         HttpRequest task1CreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -1263,14 +1264,14 @@ public class EndpointTest {
 
         System.out.println("shouldReturnNonEmptyHistory test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartTime("01.08.2023 12:00");
+        task1.setStartDateTime("01.08.2023 12:00");
         task1.setDuration(15L);
 
         Task task2 = taskManager.createTask("task2", "2d task");
-        task2.setStartTime("01.08.2023 12:30");
+        task2.setStartDateTime("01.08.2023 12:30");
         task2.setDuration(15L);
 
         HttpRequest task1CreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -1315,16 +1316,16 @@ public class EndpointTest {
 
         System.out.println("shouldReturnListOfSubtasksFromEpic test");
 
-        HttpTaskManager taskManager = new HttpTaskManager(urlToHttpTaskServer);
+        HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartTime("01.08.2023 13:00");
+        subtask1.setStartDateTime("01.08.2023 13:00");
         subtask1.setDuration(15L);
 
         Subtask subtask2 = taskManager.createSubtask("subtask2", "2d subtask", epic1);
-        subtask2.setStartTime("01.08.2023 13:30");
+        subtask2.setStartDateTime("01.08.2023 13:30");
         subtask2.setDuration(15L);
 
         HttpRequest epic1CreateRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.

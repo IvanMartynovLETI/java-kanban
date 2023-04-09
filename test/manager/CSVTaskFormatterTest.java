@@ -31,7 +31,7 @@ public class CSVTaskFormatterTest {
                 minusNanos(nowDateTime.getNano()).plusHours(24);
 
         Task task1 = fileBackedTasksManager.createTask("task1", "1st task");
-        task1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        task1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         task1.setDuration(duration);
 
         String taskStr = CSVTaskFormatter.toString(task1);
@@ -46,7 +46,7 @@ public class CSVTaskFormatterTest {
                         DATE_TIME_FORMATTER).equals(task1.getStartDateTime()))
                         & Duration.ofMinutes(Long.parseLong(elements[6])).equals(task1.getDuraTion())
                         & (LocalDateTime.parse(elements[7], FileBackedTasksManager.
-                        DATE_TIME_FORMATTER).equals(task1.getEndTime())),
+                        DATE_TIME_FORMATTER).equals(task1.getEndDateTime())),
                 "task1 was not converted correctly to string");
     }
 
@@ -59,7 +59,7 @@ public class CSVTaskFormatterTest {
 
         Epic epic1 = fileBackedTasksManager.createEpic("epic1", "1st epic");
         Subtask subtask1 = fileBackedTasksManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        subtask1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         subtask1.setDuration(duration);
 
         String taskStr = CSVTaskFormatter.toString(subtask1);
@@ -74,7 +74,7 @@ public class CSVTaskFormatterTest {
                         DATE_TIME_FORMATTER).equals(subtask1.getStartDateTime()))
                         & Duration.ofMinutes(Long.parseLong(elements[6])).equals(subtask1.getDuraTion())
                         & (LocalDateTime.parse(elements[7], FileBackedTasksManager.
-                        DATE_TIME_FORMATTER).equals(subtask1.getEndTime())) &
+                        DATE_TIME_FORMATTER).equals(subtask1.getEndDateTime())) &
                         (Integer.parseInt(elements[8].trim()) == epic1.getId()),
                 "subtask1 was not converted correctly to string");
     }
@@ -88,7 +88,7 @@ public class CSVTaskFormatterTest {
 
         Epic epic1 = fileBackedTasksManager.createEpic("epic1", "1st epic");
         Subtask subtask1 = fileBackedTasksManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        subtask1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         subtask1.setDuration(duration);
 
         String taskStr = CSVTaskFormatter.toString(epic1);
@@ -103,13 +103,13 @@ public class CSVTaskFormatterTest {
                         DATE_TIME_FORMATTER).equals(epic1.getStartDateTime()))
                         & Duration.ofMinutes(Long.parseLong(elements[6])).equals(epic1.getDuraTion())
                         & (LocalDateTime.parse(elements[7], FileBackedTasksManager.
-                        DATE_TIME_FORMATTER).equals(epic1.getEndTime())),
+                        DATE_TIME_FORMATTER).equals(epic1.getEndDateTime())),
                 "epic1 was not converted correctly to string");
     }
 
     @Test
     public void shouldRestoreTaskFromString() {
-        String taskStr = "1,TASK,task1,IN_PROGRESS,1st task,20.04.2023 10:00,15,20.04.2023 10:15, ";
+        String taskStr = "1,TASK,task1,IN_PROGRESS,1st task,20.03.2023 10:00,15,20.03.2023 10:15, ";
         String[] elements = taskStr.split(",");
         Task task1 = CSVTaskFormatter.fromString(taskStr);
 
@@ -123,13 +123,13 @@ public class CSVTaskFormatterTest {
                         DATE_TIME_FORMATTER).equals(task1.getStartDateTime()))
                         & Duration.ofMinutes(Long.parseLong(elements[6])).equals(task1.getDuraTion())
                         & (LocalDateTime.parse(elements[7], FileBackedTasksManager.
-                        DATE_TIME_FORMATTER).equals(task1.getEndTime())),
+                        DATE_TIME_FORMATTER).equals(task1.getEndDateTime())),
                 "task1 was not restored correctly from string");
     }
 
     @Test
     public void shouldRestoreSubtaskFromString() {
-        String taskStr = "2,SUBTASK,subtask1,NEW,1st subtask,20.04.2023 19:00,15,20.04.2023 19:15,1";
+        String taskStr = "2,SUBTASK,subtask1,NEW,1st subtask,20.03.2023 19:00,15,20.03.2023 19:15,1";
         String[] elements = taskStr.split(",");
         Subtask subtask1 = (Subtask) CSVTaskFormatter.fromString(taskStr);
 
@@ -143,7 +143,7 @@ public class CSVTaskFormatterTest {
                         DATE_TIME_FORMATTER).equals(subtask1.getStartDateTime()))
                         & Duration.ofMinutes(Long.parseLong(elements[6])).equals(subtask1.getDuraTion())
                         & (LocalDateTime.parse(elements[7], FileBackedTasksManager.
-                        DATE_TIME_FORMATTER).equals(subtask1.getEndTime())) &
+                        DATE_TIME_FORMATTER).equals(subtask1.getEndDateTime())) &
                         (Integer.parseInt(elements[8]) == subtask1.getUpperEpicId()),
                 "subtask1 was not restored correctly from string");
     }
@@ -164,7 +164,7 @@ public class CSVTaskFormatterTest {
                         DATE_TIME_FORMATTER).equals(epic1.getStartDateTime()))
                         & Duration.ofMinutes(Long.parseLong(elements[6])).equals(epic1.getDuraTion())
                         & (LocalDateTime.parse(elements[7], FileBackedTasksManager.
-                        DATE_TIME_FORMATTER).equals(epic1.getEndTime())),
+                        DATE_TIME_FORMATTER).equals(epic1.getEndDateTime())),
                 "epic1 was not restored correctly from string");
     }
 

@@ -42,43 +42,50 @@ public abstract class ControllerForPostMethod {
     public abstract void taskCreator(List<String> taskElements, TaskManager taskManager) throws ManagerSaveException;
     public abstract void taskUpdater(int iD, TaskManager taskManager);
 
-    public void proceeding(HttpExchange exchange, TaskManager taskManager) throws IOException, NullPointerException {
-        String response;
+    public void proceeding(HttpExchange exchange, TaskManager taskManager) {
+        String response = null;
         int responseCode;
         List<String> taskElements;
 
-        if(!(exchange.getRequestURI().getQuery() == null)) {
-            response = "Bad request";
-            responseCode = 400;
-        } else{
-            taskElements = taskReader(exchange);
-
-            if(taskElements.isEmpty()) {
+        try {
+            if(!(exchange.getRequestURI().getQuery() == null)) {
                 response = "Bad request";
                 responseCode = 400;
-            } else {
-                int iD = findIdIfTaskIsPresentInStorage(taskElements, taskManager);
-                if(iD != 0) {
-                    taskUpdater(iD, taskManager);
-                    response = "OK";
-                    responseCode = 200;
+            } else{
+                taskElements = taskReader(exchange);
+
+                if(taskElements.isEmpty()) {
+                    response = "Bad request";
+                    responseCode = 400;
                 } else {
-                    try{
-                        taskCreator(taskElements, taskManager);
-                        response = "Created";
-                        responseCode = 201;
-                    } catch (ManagerSaveException e) {
-                        response = "Bad request";
-                        responseCode = 400;
+                    int iD = findIdIfTaskIsPresentInStorage(taskElements, taskManager);
+                    if(iD != 0) {
+                        taskUpdater(iD, taskManager);
+                        response = "OK";
+                        responseCode = 200;
+                    } else {
+                        try{
+                            taskCreator(taskElements, taskManager);
+                            response = "Created";
+                            responseCode = 201;
+                        } catch (ManagerSaveException e) {
+                            response = "Bad request";
+                            responseCode = 400;
+                        }
                     }
                 }
             }
+
+            exchange.sendResponseHeaders(responseCode,0);
+        } catch (IOException | NullPointerException e) {
+            e.printStackTrace();
         }
 
-        exchange.sendResponseHeaders(responseCode,0);
-
         try (OutputStream os = exchange.getResponseBody()) {
+            assert response != null;
             os.write(response.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

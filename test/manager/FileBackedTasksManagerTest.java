@@ -272,7 +272,7 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
 
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        subtask1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         subtask1.setDuration(15L);
 
         taskManager.put(epic1);
@@ -288,7 +288,7 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
         taskManager.put(task1);
 
         LocalDateTime taskStartDateTime = startDateTime.plusMinutes(30);
-        task1.setStartTime(taskStartDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        task1.setStartDateTime(taskStartDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
 
         assertTrue(taskManager.getPrioritizedTasks().size() == 2
                         & taskManager.getPrioritizedTasks().get(1).equals(task1),
@@ -309,18 +309,19 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
 
         Task task = taskManager.createTask("task1", "1st task");
 
-        task.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        task.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
 
         assertEquals(startDateTime, task.getStartDateTime(),
                 "An error occurred while setting start time of task");
-        assertDoesNotThrow(() -> task.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER)));
+        assertDoesNotThrow(() -> task.setStartDateTime(startDateTime.format(FileBackedTasksManager.
+                DATE_TIME_FORMATTER)));
     }
 
     @Test
     public void shouldReturnDateTimeParseExceptionWhileSettingUpIncorrectStartDateTimeForTask() {
         Task task = taskManager.createTask("task1", "1st task");
         final DateTimeParseException exception = assertThrows(DateTimeParseException.class, () ->
-                task.setStartTime(""));
+                task.setStartDateTime(""));
 
         assertEquals("Text '' could not be parsed at index 0", exception.getMessage());
     }
@@ -336,12 +337,12 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
 
-        subtask1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        subtask1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
 
         assertEquals(startDateTime, subtask1.getStartDateTime(),
                 "An error occurred during setting start time for subtask1");
         assertDoesNotThrow(() ->
-                subtask1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER)));
+                subtask1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER)));
     }
 
     @Test
@@ -351,7 +352,7 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
 
         final DateTimeParseException exception = assertThrows(DateTimeParseException.class, () ->
-                subtask1.setStartTime(""));
+                subtask1.setStartDateTime(""));
 
         assertEquals("Text '' could not be parsed at index 0", exception.getMessage());
     }
@@ -365,7 +366,7 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
 
         Task task1 = taskManager.createTask("task1", "1st task");
 
-        task1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        task1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         task1.setDuration(15L);
 
         assertEquals(Duration.ofMinutes(15L), task1.getDuraTion(),
@@ -385,7 +386,7 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
 
-        subtask1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        subtask1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         subtask1.setDuration(15L);
 
         assertEquals(Duration.ofMinutes(15L), subtask1.getDuraTion(), "Incorrect duration for subtask1");
@@ -451,7 +452,7 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
 
-        subtask1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        subtask1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
 
         subtask1.setDuration(15L);
 
@@ -459,7 +460,7 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
 
 
         Subtask subtask2 = taskManager.createSubtask("subtask2", "2 subtask", epic1);
-        subtask2.setStartTime(startDateTime.plusMinutes(30L).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        subtask2.setStartDateTime(startDateTime.plusMinutes(30L).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
 
         subtask2.setDuration(15L);
 
@@ -468,28 +469,28 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
 
         assertEquals(subtask1.getStartDateTime(), epic1.getStartDateTime(), "Incorrect start time for epic1");
         assertEquals(Duration.ofMinutes(30L), epic1.getDuraTion(), "Incorrect duration for epic1");
-        assertEquals(subtask2.getEndTime(), epic1.getEndTime(), "Incorrect end time for epic1");
+        assertEquals(subtask2.getEndDateTime(), epic1.getEndDateTime(), "Incorrect end time for epic1");
 
         subtask2.setDuration(0L);
         taskManager.update(epic1);
 
         assertEquals(subtask1.getStartDateTime(), epic1.getStartDateTime(), "Incorrect start time for epic1");
         assertEquals(Duration.ofMinutes(15L), epic1.getDuraTion(), "Incorrect duration for epic1");
-        assertEquals(subtask2.getEndTime(), epic1.getEndTime(), "Incorrect end time for epic1");
+        assertEquals(subtask2.getEndDateTime(), epic1.getEndDateTime(), "Incorrect end time for epic1");
 
         taskManager.deleteSubtaskById(subtask2.getId());
         taskManager.update(epic1);
 
         assertEquals(subtask1.getStartDateTime(), epic1.getStartDateTime(), "Incorrect start time for epic1");
         assertEquals(Duration.ofMinutes(15L), epic1.getDuraTion(), "Incorrect duration for epic1");
-        assertEquals(subtask1.getEndTime(), epic1.getEndTime(), "Incorrect end time for epic1");
+        assertEquals(subtask1.getEndDateTime(), epic1.getEndDateTime(), "Incorrect end time for epic1");
 
         Subtask subtask3 = taskManager.createSubtask("subtask3", "3rd subtask", epic1);
         taskManager.put(subtask3);
 
         subtask3.setDuration(15L);
         taskManager.update(epic1);
-        assertEquals(subtask3.getEndTime(), epic1.getEndTime(), "Incorrect end time for epic1");
+        assertEquals(subtask3.getEndDateTime(), epic1.getEndDateTime(), "Incorrect end time for epic1");
     }
 
     @Test
@@ -504,12 +505,12 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
 
         Task task1 = fileBackedTasksManager1.createTask("task1", "1st task");
         fileBackedTasksManager1.put(task1);
-        task1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        task1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         task1.setDuration(15L);
         fileBackedTasksManager1.update(task1);
         Task task2 = fileBackedTasksManager1.createTask("task2", "2d task");
         fileBackedTasksManager1.put(task2);
-        task2.setStartTime(startDateTime.plusMinutes(30).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        task2.setStartDateTime(startDateTime.plusMinutes(30).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         task2.setDuration(15L);
         fileBackedTasksManager1.update(task2);
         fileBackedTasksManager1.update(task2);
@@ -517,12 +518,12 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
         fileBackedTasksManager1.put(epic1);
         Subtask subtask1 = fileBackedTasksManager1.createSubtask("subtask1", "1st subtask", epic1);
         fileBackedTasksManager1.put(subtask1);
-        subtask1.setStartTime(startDateTime.plusMinutes(60).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        subtask1.setStartDateTime(startDateTime.plusMinutes(60).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         subtask1.setDuration(15L);
         fileBackedTasksManager1.update(subtask1);
         Subtask subtask2 = fileBackedTasksManager1.createSubtask("subtask2", "2d subtask", epic1);
         fileBackedTasksManager1.put(subtask2);
-        subtask2.setStartTime(startDateTime.plusMinutes(90).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        subtask2.setStartDateTime(startDateTime.plusMinutes(90).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         subtask2.setDuration(15L);
 
         fileBackedTasksManager1.update(epic1);
@@ -564,12 +565,12 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
 
         Task task1 = fileBackedTasksManager1.createTask("task1", "1st task");
         fileBackedTasksManager1.put(task1);
-        task1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        task1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         task1.setDuration(15L);
         fileBackedTasksManager1.update(task1);
         Task task2 = fileBackedTasksManager1.createTask("task2", "2d task");
         fileBackedTasksManager1.put(task2);
-        task2.setStartTime(startDateTime.plusMinutes(30).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        task2.setStartDateTime(startDateTime.plusMinutes(30).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         task2.setDuration(15L);
         fileBackedTasksManager1.update(task2);
         fileBackedTasksManager1.update(task2);
@@ -613,7 +614,7 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
 
         Task task1 = fileBackedTasksManager1.createTask("task1", "1st task");
         fileBackedTasksManager1.put(task1);
-        task1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        task1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         task1.setDuration(15L);
         taskManager.update(task1);
         taskManager.deleteTopLevelTaskById(task1.getId(), task1);
@@ -639,28 +640,28 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
         FileBackedTasksManager fileBackedTasksManager1 = FileBackedTasksManager.loadFromFile(file1);
 
         Task task3 = CSVTaskFormatter.
-                fromString("7,TASK,task3,IN_PROGRESS,3rd task,20.04.2023 10:00,15,20.04.2023 10:15, ");
+                fromString("7,TASK,task3,IN_PROGRESS,3rd task,20.03.2023 10:00,15,20.03.2023 10:15, ");
 
         assert task3 != null;
 
         fileBackedTasksManager1.tasks.put(task3.getId(), task3);
 
         Task task4 = CSVTaskFormatter.
-                fromString("8,TASK,task4,DONE,4th task,20.04.2023 10:30,15,20.04.2023 10:45, ");
+                fromString("8,TASK,task4,DONE,4th task,20.03.2023 10:30,15,20.03.2023 10:45, ");
 
         assert task4 != null;
 
         fileBackedTasksManager1.tasks.put(task4.getId(), task4);
 
         Subtask subtask3 = (Subtask) CSVTaskFormatter.
-                fromString("9,SUBTASK,subtask3,IN_PROGRESS,3rd subtask,20.04.2023 11:00,15,20.04.2023 11:15,3");
+                fromString("9,SUBTASK,subtask3,IN_PROGRESS,3rd subtask,20.03.2023 11:00,15,20.03.2023 11:15,3");
 
         assert subtask3 != null;
 
         fileBackedTasksManager1.subtasks.put(subtask3.getId(), subtask3);
 
         Subtask subtask4 = (Subtask) CSVTaskFormatter.
-                fromString("10,SUBTASK,subtask4,NEW,4th subtask,20.04.2023 11:30,15,20.04.2023 11:45,3");
+                fromString("10,SUBTASK,subtask4,NEW,4th subtask,20.03.2023 11:30,15,20.03.2023 11:45,3");
 
         assert subtask4 != null;
 
@@ -680,7 +681,7 @@ public abstract class FileBackedTasksManagerTest extends TaskManagerTest<FileBac
                 "An error occurred during maps of subtasks restoring");
 
         Epic epic2 = (Epic) CSVTaskFormatter.
-                fromString("11,EPIC,epic2,IN_PROGRESS,2d epic,20.04.2023 11:00,30,20.04.2023 11:45, ");
+                fromString("11,EPIC,epic2,IN_PROGRESS,2d epic,20.03.2023 11:00,30,20.03.2023 11:45, ");
 
         assert epic2 != null;
 

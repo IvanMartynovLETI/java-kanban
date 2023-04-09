@@ -8,7 +8,7 @@ public class Managers {
     public static TaskManager getDefault() {
         TaskManager taskManager = null;
         try {
-            taskManager = new /*InMemoryTaskManager()*/HttpTaskManager(new URL(URL_OF_KVSERVER));
+            taskManager = new HttpTaskManager(new URL(URL_OF_KVSERVER));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

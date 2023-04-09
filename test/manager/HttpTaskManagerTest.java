@@ -364,12 +364,12 @@ public class HttpTaskManagerTest extends FileBackedTasksManagerTest{
 
             Task task1 = httpTaskManager1.createTask("task1", "1st task");
             httpTaskManager1.put(task1);
-            task1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+            task1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
             task1.setDuration(15L);
             httpTaskManager1.update(task1);
             Task task2 = httpTaskManager1.createTask("task2", "2d task");
             httpTaskManager1.put(task2);
-            task2.setStartTime(startDateTime.plusMinutes(30).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+            task2.setStartDateTime(startDateTime.plusMinutes(30).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
             task2.setDuration(15L);
             httpTaskManager1.update(task2);
             httpTaskManager1.update(task2);
@@ -377,12 +377,12 @@ public class HttpTaskManagerTest extends FileBackedTasksManagerTest{
             httpTaskManager1.put(epic1);
             Subtask subtask1 = httpTaskManager1.createSubtask("subtask1", "1st subtask", epic1);
             httpTaskManager1.put(subtask1);
-            subtask1.setStartTime(startDateTime.plusMinutes(60).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+            subtask1.setStartDateTime(startDateTime.plusMinutes(60).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
             subtask1.setDuration(15L);
             httpTaskManager1.update(subtask1);
             Subtask subtask2 = httpTaskManager1.createSubtask("subtask2", "2d subtask", epic1);
             httpTaskManager1.put(subtask2);
-            subtask2.setStartTime(startDateTime.plusMinutes(90).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+            subtask2.setStartDateTime(startDateTime.plusMinutes(90).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
             subtask2.setDuration(15L);
 
             httpTaskManager1.update(epic1);
@@ -432,12 +432,12 @@ public class HttpTaskManagerTest extends FileBackedTasksManagerTest{
 
             Task task1 = httpTaskManager1.createTask("task1", "1st task");
             httpTaskManager1.put(task1);
-            task1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+            task1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
             task1.setDuration(15L);
             httpTaskManager1.update(task1);
             Task task2 = httpTaskManager1.createTask("task2", "2d task");
             httpTaskManager1.put(task2);
-            task2.setStartTime(startDateTime.plusMinutes(30).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+            task2.setStartDateTime(startDateTime.plusMinutes(30).format(FileBackedTasksManager.DATE_TIME_FORMATTER));
             task2.setDuration(15L);
             httpTaskManager1.update(task2);
             httpTaskManager1.update(task2);
@@ -488,7 +488,7 @@ public class HttpTaskManagerTest extends FileBackedTasksManagerTest{
 
             Task task1 = httpTaskManager1.createTask("task1", "1st task");
             httpTaskManager1.put(task1);
-            task1.setStartTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+            task1.setStartDateTime(startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
             task1.setDuration(15L);
             taskManager.update(task1);
             taskManager.deleteTopLevelTaskById(task1.getId(), task1);
@@ -522,16 +522,16 @@ public class HttpTaskManagerTest extends FileBackedTasksManagerTest{
         gson = gsonBuilder.create();
         String nonEmptyMapsAndEmptyHistory = gson.toJson(
                 """
-                        id,type,name,status,description,setStartTime,duration,endTime,epic
-                        1,TASK,task1,IN_PROGRESS,1st task,22.08.2023 00:00,15,22.08.2023 00:15,\s
-                        2,TASK,task2,DONE,2d task,22.08.2023 00:30,15,22.08.2023 00:45,\s
-                        3,EPIC,epic1,IN_PROGRESS,1st epic,22.08.2023 01:00,30,22.08.2023 01:45,\s
-                        4,SUBTASK,subtask1,IN_PROGRESS,1st subtask,22.08.2023 01:00,15,22.08.2023 01:15,3
-                        5,SUBTASK,subtask2,NEW,2d subtask,22.08.2023 01:30,15,22.08.2023 01:45,3
+                        id,type,name,status,description,setStartDateTime,duration,endDateTime,epic
+                        1,TASK,task1,IN_PROGRESS,1st task,22.03.2023 00:00,15,22.03.2023 00:15,\s
+                        2,TASK,task2,DONE,2d task,22.03.2023 00:30,15,22.03.2023 00:45,\s
+                        3,EPIC,epic1,IN_PROGRESS,1st epic,22.03.2023 01:00,30,22.03.2023 01:45,\s
+                        4,SUBTASK,subtask1,IN_PROGRESS,1st subtask,22.03.2023 01:00,15,22.03.2023 01:15,3
+                        5,SUBTASK,subtask2,NEW,2d subtask,22.03.2023 01:30,15,22.03.2023 01:45,3
 
 
 
-                        22.08.2023 00:00,22.08.2024 00:00,21.08.2024 22:30""");
+                        22.03.2023 00:00,22.03.2024 00:00,21.03.2024 22:30""");
 
         try {
 
@@ -541,15 +541,15 @@ public class HttpTaskManagerTest extends FileBackedTasksManagerTest{
             HttpTaskManager httpTaskManager = HttpTaskManager.load(new URL("http://localhost:8078"));
 
             Task task1 = CSVTaskFormatter.
-                    fromString("1,TASK,task1,IN_PROGRESS,1st task,22.08.2023 00:00,15,22.08.2023 00:15, ");
+                    fromString("1,TASK,task1,IN_PROGRESS,1st task,22.03.2023 00:00,15,22.03.2023 00:15, ");
             Task task2 = CSVTaskFormatter.
-                    fromString("2,TASK,task2,DONE,2d task,22.08.2023 00:30,15,22.08.2023 00:45, ");
+                    fromString("2,TASK,task2,DONE,2d task,22.03.2023 00:30,15,22.03.2023 00:45, ");
             Epic epic1 = (Epic) CSVTaskFormatter.
-                    fromString("3,EPIC,epic1,IN_PROGRESS,1st epic,22.08.2023 01:00,30,22.08.2023 01:45, ");
+                    fromString("3,EPIC,epic1,IN_PROGRESS,1st epic,22.03.2023 01:00,30,22.03.2023 01:45, ");
             Subtask subtask1 = (Subtask) CSVTaskFormatter.
-                    fromString("4,SUBTASK,subtask1,IN_PROGRESS,1st subtask,22.08.2023 01:00,15,22.08.2023 01:15,3");
+                    fromString("4,SUBTASK,subtask1,IN_PROGRESS,1st subtask,22.03.2023 01:00,15,22.03.2023 01:15,3");
             Subtask subtask2 = (Subtask) CSVTaskFormatter.
-                    fromString("5,SUBTASK,subtask2,NEW,2d subtask,22.08.2023 01:30,15,22.08.2023 01:45,3");
+                    fromString("5,SUBTASK,subtask2,NEW,2d subtask,22.03.2023 01:30,15,22.03.2023 01:45,3");
 
             assertTrue(httpTaskManager.getHistory().isEmpty(),
                     "An error occurred while restoring history from log file");
@@ -594,10 +594,10 @@ public class HttpTaskManagerTest extends FileBackedTasksManagerTest{
         gson = gsonBuilder.create();
         String emptyMapsAndNonEmptyHistory = gson.toJson(
                 """
-                        id,type,name,status,description,setStartTime,duration,endTime,epic
+                        id,type,name,status,description,setStartDateTime,duration,endDateTime,epic
                         2,1,3,5,4
 
-                        20.04.2023 00:00,20.04.2024 00:00,19.04.2024 22:30""");
+                        20.03.2023 00:00,20.03.2024 00:00,19.03.2024 22:30""");
 
         try {
 

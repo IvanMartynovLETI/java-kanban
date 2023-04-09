@@ -44,12 +44,15 @@ public class HttpTaskServer {
 
                 try (OutputStream os = exchange.getResponseBody()) {
                     os.write("Bad request".getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
     }
 
-    private void subtaskHandler(HttpExchange exchange) throws IOException{
+    private void subtaskHandler(HttpExchange exchange) throws IOException {
+
         String method = exchange.getRequestMethod();
 
         switch (method) {
@@ -70,6 +73,7 @@ public class HttpTaskServer {
     }
 
     private void epicHandler(HttpExchange exchange) throws IOException {
+
         String method = exchange.getRequestMethod();
 
         switch (method) {
@@ -90,6 +94,7 @@ public class HttpTaskServer {
     }
 
     private void subtasksOfEpicHandler(HttpExchange exchange) throws IOException {
+
         String method = exchange.getRequestMethod();
 
         if (method.equals("GET")) {
@@ -105,6 +110,7 @@ public class HttpTaskServer {
     }
 
     private void historyHandler(HttpExchange exchange) throws IOException {
+
         String method = exchange.getRequestMethod();
 
         if (method.equals("GET")) {
@@ -120,6 +126,7 @@ public class HttpTaskServer {
     }
 
     private void prioritizedTasksHandler(HttpExchange exchange) throws IOException {
+
         String method = exchange.getRequestMethod();
 
         if (method.equals("GET")) {
@@ -139,7 +146,7 @@ public class HttpTaskServer {
         taskManager.deleteAllTasksSameKind(new Epic(0, "", ""));
     }
 
-    public void start() throws IOException {
+    public void start() {
         this.httpServer.start();
         System.out.println("HTTP server started on " + PORT + " port.");
     }

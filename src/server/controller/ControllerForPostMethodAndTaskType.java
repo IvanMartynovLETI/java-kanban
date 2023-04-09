@@ -58,9 +58,9 @@ public class ControllerForPostMethodAndTaskType extends ControllerForPostMethod{
                 isTaskCorrect = false;
             }
 
-            if(!jsonObject.get("startTime").getAsString().isEmpty()) {
+            if(!jsonObject.get("startDateTime").getAsString().isEmpty()) {
                 try {
-                    LocalDateTime ldtm = LocalDateTime.parse(jsonObject.get("startTime").getAsString(),
+                    LocalDateTime ldtm = LocalDateTime.parse(jsonObject.get("startDateTime").getAsString(),
                             FileBackedTasksManager.DATE_TIME_FORMATTER);
 
                     taskElements.add(ldtm.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
@@ -116,7 +116,7 @@ public class ControllerForPostMethodAndTaskType extends ControllerForPostMethod{
         if(taskElements.get(3).equals("empty")) {
             task.setDuration(Long.parseLong(taskElements.get(4)));
         } else {
-            task.setStartTime(taskElements.get(3));
+            task.setStartDateTime(taskElements.get(3));
             task.setDuration(Long.parseLong(taskElements.get(4)));
         }
 

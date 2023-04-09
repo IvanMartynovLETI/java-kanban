@@ -246,9 +246,9 @@ public class InMemoryTaskManager implements TaskManager {
         } else if (t instanceof Subtask) {
             for (Epic epic : epics.values()) {
                 epic.getSubTaskIds().clear();
-                epic.setStartTime("01.01.0001 00:00");
+                epic.setStartDateTime("01.01.0001 00:00");
                 epic.setDuration(0L);
-                epic.setEndTime();
+                epic.setEndDateTime();
 
             }
 

@@ -13,26 +13,25 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-
 public class FileBackedTasksManager extends InMemoryTaskManager {
     protected final File file;
-    protected final HashMap<LocalDateTime, Boolean> gridOfTiMes = new HashMap<>();
+    protected final HashMap<LocalDateTime, Boolean> gridOfTimes = new HashMap<>();
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     public static final Long GRID_TIME_SPACE = 15L;//шаг временнОй сетки планирования задач, минут
     protected LocalDateTime startDateTimeOfUnusualTsk; //задачи с пропущенным временем начала планировщик будет
-    //помещать на конец года, каждая новая такая задача будет
-    //сдвигаться к началу года.
+                                                       //помещать на конец года, каждая новая такая задача будет
+                                                       //сдвигаться к началу года.
 
-    protected LocalDateTime tempEndTime;
-    protected static final LocalDateTime nowDateTime = LocalDateTime.now();
-    public static final LocalDateTime startDateTime = nowDateTime.//Начальная точка временнОй шкалы
+    protected LocalDateTime tempEndDateTime;
+    private final static LocalDateTime nowDateTime = LocalDateTime.now();
+    public static LocalDateTime startDateTime = nowDateTime.      //Начальная точка временнОй шкалы
             minusHours(nowDateTime.getHour()).                    //планирования задач (период планирования
             minusMinutes(nowDateTime.getMinute()).                //-год).
             minusSeconds(nowDateTime.getSecond()).
             minusNanos(nowDateTime.getNano()).plusDays(1);
 
-    protected static final LocalDateTime endDaTeTiMe = startDateTime.plusYears(1L); //Конечная точка временнОй шкалы
-    // планирования задач.
+    public static LocalDateTime endDateTime = startDateTime.plusYears(1L); //Конечная точка временнОй шкалы
+                                                                           // планирования задач.
     protected final Comparator<Task> comparator = Comparator.comparing(Task::getStartDateTime);
 
     protected final Set<Task> prioritizedTasks = new TreeSet<>(comparator);
@@ -40,16 +39,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public FileBackedTasksManager(File file) {
         super();
         this.file = file;
-        this.startDateTimeOfUnusualTsk = endDaTeTiMe;
-        this.tempEndTime = endDaTeTiMe;
-        fillTiMeGrid();
+        this.startDateTimeOfUnusualTsk = endDateTime;
+        this.tempEndDateTime = endDateTime;
+        fillTimeGrid();
     }
 
     protected <T extends Task> void addToPrioritizedTasks(T t) {
 
-        for (LocalDateTime dtm = t.getStartDateTime(); dtm.isBefore(t.getEndTime().plusMinutes(GRID_TIME_SPACE));
+        for (LocalDateTime dtm = t.getStartDateTime(); dtm.isBefore(t.getEndDateTime().plusMinutes(GRID_TIME_SPACE));
              dtm = dtm.plusMinutes(GRID_TIME_SPACE)) {
-            gridOfTiMes.put(dtm, false);
+            gridOfTimes.put(dtm, false);
         }
 
         prioritizedTasks.add(t);
@@ -59,87 +58,93 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return new ArrayList<>(prioritizedTasks);
     }
 
-    protected void fillTiMeGrid() {
-        for (LocalDateTime dtm = startDateTime; dtm.isBefore(endDaTeTiMe.plusMinutes(GRID_TIME_SPACE));
+    protected void fillTimeGrid() {
+        for (LocalDateTime dtm = startDateTime; dtm.isBefore(endDateTime.plusMinutes(GRID_TIME_SPACE));
              dtm = dtm.plusMinutes(GRID_TIME_SPACE)) {
-            gridOfTiMes.put(dtm, true);
+            gridOfTimes.put(dtm, true);
         }
     }
 
-    protected void fillTiMeGridFromEndStringOfFile(List<String> listOfStrings) {
+    protected void fillTimeGridFromEndStringOfFile(List<String> listOfStrings) {
         String[] elements = listOfStrings.get(listOfStrings.size() - 1).split(",");
 
         for (LocalDateTime ldm = LocalDateTime.parse(elements[0], DATE_TIME_FORMATTER);
              ldm.isBefore(LocalDateTime.parse(elements[1], DATE_TIME_FORMATTER).plusMinutes(GRID_TIME_SPACE));
              ldm = ldm.plusMinutes(GRID_TIME_SPACE)) {
-            gridOfTiMes.put(ldm, true);
+            gridOfTimes.put(ldm, true);
         }
     }
 
-    protected LocalDateTime restoreTempEndTimeFromListOfStrings(List<String> listOfStrings) {
+    protected LocalDateTime restoreTempEndDateTimeFromListOfStrings(List<String> listOfStrings) {
         String[] elements = listOfStrings.get(listOfStrings.size() - 1).split(",");
         return LocalDateTime.parse(elements[2], DATE_TIME_FORMATTER);
     }
 
-    protected void restoreTiMeGrid(Task task) {
+    protected void restoreTimeGrid(Task task) {
         if (!(task instanceof Epic)) {
             for (LocalDateTime ldm = task.getStartDateTime();
-                 ldm.isBefore(task.getEndTime().plusMinutes(GRID_TIME_SPACE));
+                 ldm.isBefore(task.getEndDateTime().plusMinutes(GRID_TIME_SPACE));
                  ldm = ldm.plusMinutes(GRID_TIME_SPACE)) {
-                gridOfTiMes.put(ldm, true);
+                gridOfTimes.put(ldm, true);
             }
         }
     }
 
     protected boolean isTskValid(Task task) {
-
-        for (LocalDateTime dtm = task.getStartDateTime(); dtm.isBefore(task.getEndTime().plusMinutes(GRID_TIME_SPACE));
-             dtm = dtm.plusMinutes(GRID_TIME_SPACE)) {
-            if (!gridOfTiMes.get(dtm)) {
-                return false;
+        boolean isTskValid = true;
+        if(!(task.getStartDateTime().isAfter(startDateTime.minusMinutes(GRID_TIME_SPACE))) 
+                & task.getEndDateTime().isBefore(endDateTime.plusMinutes(GRID_TIME_SPACE))) {
+            isTskValid = false;
+        } else {
+            for (LocalDateTime dtm = task.getStartDateTime(); dtm.isBefore(task.getEndDateTime().
+                    plusMinutes(GRID_TIME_SPACE));
+                 dtm = dtm.plusMinutes(GRID_TIME_SPACE)) {
+                if (!gridOfTimes.get(dtm)) {
+                    isTskValid =  false;
+                }
             }
         }
 
-        return true;
+        return isTskValid;
     }
 
     protected  <T extends Task> void incorrectTskImprover(T t) {
         if (!(t instanceof Epic)) {
-            t.setStartTime((tempEndTime.minusMinutes(t.getDuraTion().toMinutes()))
+            t.setStartDateTime((tempEndDateTime.minusMinutes(t.getDuraTion().toMinutes()))
                     .format(FileBackedTasksManager.DATE_TIME_FORMATTER));
-            t.setEndTime();
+            t.setEndDateTime();
             startDateTimeOfUnusualTsk = t.getStartDateTime().minusMinutes(GRID_TIME_SPACE);//обеспечиваем временной
-            tempEndTime = startDateTimeOfUnusualTsk;                                       //зазор между задачами
+            tempEndDateTime = startDateTimeOfUnusualTsk;                                   //зазор между задачами
         }
     }
 
     protected void actualizeTimeParametersOfEpc(int epicId) {
         ArrayList<Integer> iDsOfAttachedSubtsks = epics.get(epicId).getSubTaskIds();
-        LocalDateTime minStartTime = LocalDateTime.parse("01.01.0001 00:00", DATE_TIME_FORMATTER);
-        LocalDateTime maxEndTime = LocalDateTime.parse("01.01.0001 00:00", DATE_TIME_FORMATTER);
+        LocalDateTime minStartDateTime = LocalDateTime.parse("01.01.0001 00:00", DATE_TIME_FORMATTER);
+        LocalDateTime maxEndDateTime = LocalDateTime.parse("01.01.0001 00:00", DATE_TIME_FORMATTER);
         Duration sumOfDurations = Duration.ofMinutes(0);
         Epic tempEpic;
 
         for (Integer iD : iDsOfAttachedSubtsks) {
             if (iDsOfAttachedSubtsks.indexOf(iD) == 0) {
-                minStartTime = subtasks.get(iD).getStartDateTime();
-                maxEndTime = subtasks.get(iD).getEndTime();
+                minStartDateTime = subtasks.get(iD).getStartDateTime();
+                maxEndDateTime = subtasks.get(iD).getEndDateTime();
             } else {
-                if (minStartTime.isAfter(subtasks.get(iD).getStartDateTime())) {
-                    minStartTime = subtasks.get(iD).getStartDateTime();
+                if (minStartDateTime.isAfter(subtasks.get(iD).getStartDateTime())) {
+                    minStartDateTime = subtasks.get(iD).getStartDateTime();
                 }
 
-                if (maxEndTime.isBefore(subtasks.get(iD).getEndTime())) {
-                    maxEndTime = subtasks.get(iD).getEndTime();
+                if (maxEndDateTime.isBefore(subtasks.get(iD).getEndDateTime())) {
+                    maxEndDateTime = subtasks.get(iD).getEndDateTime();
                 }
             }
             sumOfDurations = sumOfDurations.plus(subtasks.get(iD).getDuraTion());
         }
 
         tempEpic = epics.get(epicId);
-        tempEpic.setStartTime(minStartTime.format(DATE_TIME_FORMATTER));
+        tempEpic.setStartDateTime(minStartDateTime.format(DATE_TIME_FORMATTER));
         tempEpic.setDuration(sumOfDurations.toMinutes());
-        tempEpic.setEndTime(maxEndTime.format(DATE_TIME_FORMATTER));
+        tempEpic.setEndDateTime(maxEndDateTime.format(DATE_TIME_FORMATTER));
 
         epics.remove(epicId);
         epics.put(epicId, tempEpic);
@@ -163,9 +168,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     throw new ManagerSaveException("Ann error occurred while restoring from log file");
                 }
 
-                fileBackedTasksManager.fillTiMeGridFromEndStringOfFile(listOfStrings);
-                fileBackedTasksManager.tempEndTime =
-                        fileBackedTasksManager.restoreTempEndTimeFromListOfStrings(listOfStrings);
+                startDateTime = LocalDateTime.parse(listOfStrings.get(listOfStrings.size()-1).split(",")[0],
+                        FileBackedTasksManager.DATE_TIME_FORMATTER);
+                endDateTime = LocalDateTime.parse(listOfStrings.get(listOfStrings.size()-1).split(",")[1],
+                        FileBackedTasksManager.DATE_TIME_FORMATTER);
+
+                fileBackedTasksManager.fillTimeGridFromEndStringOfFile(listOfStrings);
+                fileBackedTasksManager.tempEndDateTime =
+                        fileBackedTasksManager.restoreTempEndDateTimeFromListOfStrings(listOfStrings);
                 fileBackedTasksManager.prioritizedTasks.clear();
 
                 int maxId = fileBackedTasksManager.getMaxId(listOfStrings);
@@ -306,13 +316,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 bw.newLine();
                 bw.newLine();
                 bw.write(startDateTime.format(DATE_TIME_FORMATTER) + ","
-                        + endDaTeTiMe.format(DATE_TIME_FORMATTER) + "," + tempEndTime.format(DATE_TIME_FORMATTER));
+                        + endDateTime.format(DATE_TIME_FORMATTER) + "," + tempEndDateTime.format(DATE_TIME_FORMATTER));
             } catch (IOException e) {
                 throw new ManagerSaveException("An error occurred during writing to log file.");
             }
         }
     }
-
+    
     @Override
     public Task getTaskById(int taskId) {
         Task task = super.getTaskById(taskId);
@@ -359,7 +369,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public <T extends Task> void deleteTopLevelTaskById(int id, T t) {
         if (tasks.containsKey(id) || epics.containsKey(id)) {
-            restoreTiMeGrid(t);
+            restoreTimeGrid(t);
 
             if (!(t instanceof Epic)) {
                 prioritizedTasks.remove(t);
@@ -374,7 +384,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public void deleteSubtaskById(int subtaskId) {
 
         if (subtasks.containsKey(subtaskId)) {
-            restoreTiMeGrid(getSubtaskById(subtaskId));
+            restoreTimeGrid(getSubtaskById(subtaskId));
             prioritizedTasks.remove(getSubtaskById(subtaskId));
             super.deleteSubtaskById(subtaskId);
             save();
@@ -400,12 +410,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public <T extends Task> void deleteAllTasksSameKind(T t) {
         if ((t instanceof Subtask) || (t instanceof Epic)) {
             for (Subtask subtask : subtasks.values()) {
-                restoreTiMeGrid(subtask);
+                restoreTimeGrid(subtask);
                 prioritizedTasks.remove(subtask);
             }
         } else {
             for (Task task : tasks.values()) {
-                restoreTiMeGrid(task);
+                restoreTimeGrid(task);
                 prioritizedTasks.remove(task);
             }
         }

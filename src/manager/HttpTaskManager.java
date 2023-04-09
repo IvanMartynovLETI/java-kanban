@@ -45,8 +45,8 @@ public class HttpTaskManager extends FileBackedTasksManager{
                 throw new ManagerSaveException("Ann error occurred while restoring from log.");
             }
 
-            httpTaskManager.fillTiMeGridFromEndStringOfFile(listOfStrings);
-            httpTaskManager.tempEndTime = httpTaskManager.restoreTempEndTimeFromListOfStrings(listOfStrings);
+            httpTaskManager.fillTimeGridFromEndStringOfFile(listOfStrings);
+            httpTaskManager.tempEndDateTime = httpTaskManager.restoreTempEndDateTimeFromListOfStrings(listOfStrings);
             httpTaskManager.prioritizedTasks.clear();
             int maxId = httpTaskManager.getMaxId(listOfStrings);
             httpTaskManager.fillMaps(listOfStrings, httpTaskManager);
@@ -81,9 +81,9 @@ public class HttpTaskManager extends FileBackedTasksManager{
 
         allInOne.append(FileBackedTasksManager.startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         allInOne.append(",");
-        allInOne.append(FileBackedTasksManager.endDaTeTiMe.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        allInOne.append(FileBackedTasksManager.endDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
         allInOne.append(",");
-        allInOne.append(tempEndTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
+        allInOne.append(tempEndDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
 
         client.put("HEAP", gson.toJson(allInOne.toString()));
     }

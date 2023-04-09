@@ -78,9 +78,9 @@ public class ControllerForPostMethodAndSubtaskType extends ControllerForPostMeth
                 isTaskCorrect = false;
             }
 
-            if(!jsonObject.get("startTime").getAsString().isEmpty()) {
+            if(!jsonObject.get("startDateTime").getAsString().isEmpty()) {
                 try {
-                    LocalDateTime ldtm = LocalDateTime.parse(jsonObject.get("startTime").getAsString(),
+                    LocalDateTime ldtm = LocalDateTime.parse(jsonObject.get("startDateTime").getAsString(),
                             FileBackedTasksManager.DATE_TIME_FORMATTER);
 
                     taskElements.add(ldtm.format(FileBackedTasksManager.DATE_TIME_FORMATTER));
@@ -140,7 +140,7 @@ public class ControllerForPostMethodAndSubtaskType extends ControllerForPostMeth
         if(taskElements.get(3).equals("empty")) {
             subtask.setDuration(Long.parseLong(taskElements.get(4)));
         } else {
-            subtask.setStartTime(taskElements.get(4));
+            subtask.setStartDateTime(taskElements.get(4));
             subtask.setDuration(Long.parseLong(taskElements.get(5)));
         }
 

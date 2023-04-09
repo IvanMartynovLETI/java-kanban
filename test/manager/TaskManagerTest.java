@@ -190,7 +190,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldThrowNPEWhileReturningEpicByIdOfMinus1() {                                                        /////////////////////////
+    public void shouldThrowNPEWhileReturningEpicByIdOfMinus1() {
         final NullPointerException exception = assertThrows(NullPointerException.class, () ->
                 taskManager.getEpicById(-1));
         assertEquals("Cannot invoke \"task.Task.getId()\" because \"task\" is null", exception.getMessage());
@@ -489,8 +489,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         ((InMemoryTaskManager) taskManager).deleteSubtaskById(0);
 
         assertTrue(taskManager.getList(subtask1).contains(subtask1)
-                        & (taskManager.getList(subtask1).size() == 1) & epic1.getSubTaskIds().contains(subtask1.getId())
-                        & (epic1.getSubTaskIds().size() == 2),
+                        & (taskManager.getList(subtask1).size() == 1) & epic1.getSubTaskIds().contains(subtask1.
+                        getId()) & (epic1.getSubTaskIds().size() == 2),
                 "An error occurred while deleting of subtask with id=0");
         assertDoesNotThrow(() -> ((InMemoryTaskManager) taskManager).deleteSubtaskById(0));
     }
@@ -503,8 +503,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         ((InMemoryTaskManager) taskManager).deleteSubtaskById(-1);
 
         assertTrue(taskManager.getList(subtask1).contains(subtask1)
-                        & (taskManager.getList(subtask1).size() == 1) & epic1.getSubTaskIds().contains(subtask1.getId())
-                        & (epic1.getSubTaskIds().size() == 2),
+                        & (taskManager.getList(subtask1).size() == 1) & epic1.getSubTaskIds().contains(subtask1.
+                        getId()) & (epic1.getSubTaskIds().size() == 2),
                 "An error occurred while deleting of subtask with id=-1");
         assertDoesNotThrow(() -> ((InMemoryTaskManager) taskManager).deleteSubtaskById(-1));
     }

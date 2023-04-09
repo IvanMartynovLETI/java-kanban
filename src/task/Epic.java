@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
-    public ArrayList<Integer> subTaskIds;
+    protected ArrayList<Integer> subTaskIds;
 
     public Epic(int epicId, String epicName, String epicDescription) {
         super(epicId, epicName, epicDescription);
@@ -32,18 +32,18 @@ public class Epic extends Task {
         subTaskIds.clear();
     }
 
-    public void setStartTime(String setStartTime) {
-        LocalDateTime ldtm = LocalDateTime.parse(setStartTime, FileBackedTasksManager.DATE_TIME_FORMATTER);
+    public void setStartDateTime(String setStartDateTime) {
+        LocalDateTime ldtm = LocalDateTime.parse(setStartDateTime, FileBackedTasksManager.DATE_TIME_FORMATTER);
 
-        if (this.startTime.getMinute() % FileBackedTasksManager.GRID_TIME_SPACE != 0) {
+        if (this.startDateTime.getMinute() % FileBackedTasksManager.GRID_TIME_SPACE != 0) {
             throw new ManagerSaveException("Start time should be exactly divisible by "
                     + FileBackedTasksManager.startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + ".");
         }
 
-        this.startTime = ldtm;
+        this.startDateTime = ldtm;
 
         if (this.duration.toMinutes() != 0) {
-            setEndTime();
+            setEndDateTime();
         }
     }
 
@@ -55,9 +55,9 @@ public class Epic extends Task {
                 ", epicDescription='" + description + '\'' +
                 ", epicStatus='" + status + '\'' +
                 ", SubTaskIds=" + subTaskIds +
-                ", startTime='" + startTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
+                ", startDateTime='" + startDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
                 ", duration='" + duration.toMinutes() + '\'' +
-                ", endTime='" + endTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
+                ", endDateTime='" + endDateTime.format(FileBackedTasksManager.DATE_TIME_FORMATTER) + '\'' +
                 '}';
     }
 
@@ -82,8 +82,8 @@ public class Epic extends Task {
     }
 
 
-    public void setEndTime(String endTime) {
-        this.endTime = LocalDateTime.parse(endTime, FileBackedTasksManager.DATE_TIME_FORMATTER);
+    public void setEndDateTime(String endDateTime) {
+        this.endDateTime = LocalDateTime.parse(endDateTime, FileBackedTasksManager.DATE_TIME_FORMATTER);
 
     }
 }
