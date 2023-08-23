@@ -58,7 +58,7 @@
 </details>
 
 #
-Стек технологий проекта: Java, JUnit, API
+Стек технологий проекта: Java, GSON, JUnit, API
 #
 
 Примеры работы с классами приложения можно увидеть в файле java-kanban/test/server/EndpointTest.java.
