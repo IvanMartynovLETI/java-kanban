@@ -21,6 +21,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class EndpointTest {
     private static URL urlForSubtasksFromEpicsGetting;
     private static URL urlForHistoryGetting;
     private static URL urlForPrioritizedTasksGetting;
+    private static String start;
 
     @BeforeAll
     public static void beforeAll() {
@@ -60,6 +62,11 @@ public class EndpointTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        LocalDateTime ndtm = LocalDateTime.now();
+        LocalDateTime startDateTime = ndtm.plusDays(1L);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        start = startDateTime.format(formatter);
     }
 
     @BeforeEach
@@ -152,7 +159,7 @@ public class EndpointTest {
         HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartDateTime("01.08.2023 12:00");
+        task1.setStartDateTime(start + " 12:00");
         task1.setDuration(15L);
 
         HttpRequest request = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.toJson(task1),
@@ -180,7 +187,7 @@ public class EndpointTest {
         HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartDateTime("01.08.2023 12:00");
+        task1.setStartDateTime(start + " 12:00");
         task1.setDuration(15L);
 
         HttpRequest taskCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.
@@ -220,7 +227,7 @@ public class EndpointTest {
         HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartDateTime("01.08.2023 12:00");
+        task1.setStartDateTime(start + " 12:00");
         task1.setDuration(15L);
 
         HttpRequest taskCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -263,11 +270,11 @@ public class EndpointTest {
         HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartDateTime("01.08.2023 12:00");
+        task1.setStartDateTime(start + " 12:00");
         task1.setDuration(15L);
 
         Task task2 = taskManager.createTask("task2", "2d task");
-        task2.setStartDateTime("01.08.2023 12:30");
+        task2.setStartDateTime(start + " 12:30");
         task2.setDuration(15L);
 
         HttpRequest task1CreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -308,11 +315,11 @@ public class EndpointTest {
         HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartDateTime("01.08.2023 12:00");
+        task1.setStartDateTime(start + " 12:00");
         task1.setDuration(15L);
 
         Task task2 = taskManager.createTask("task2", "2d task");
-        task2.setStartDateTime("01.08.2023 12:30");
+        task2.setStartDateTime(start + " 12:30");
         task2.setDuration(15L);
 
         HttpRequest taskCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -362,7 +369,7 @@ public class EndpointTest {
         HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartDateTime("01.08.2023 12:00");
+        task1.setStartDateTime(start + " 12:00");
         task1.setDuration(15L);
 
         HttpRequest taskCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -650,7 +657,7 @@ public class EndpointTest {
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartDateTime("01.08.2023 13:00");
+        subtask1.setStartDateTime(start + " 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epicCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -760,7 +767,7 @@ public class EndpointTest {
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartDateTime("01.08.2023 13:00");
+        subtask1.setStartDateTime(start + " 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epicCreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -798,7 +805,7 @@ public class EndpointTest {
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartDateTime("01.08.2023 13:00");
+        subtask1.setStartDateTime(start + " 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epic1CreateRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -839,7 +846,7 @@ public class EndpointTest {
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartDateTime("01.08.2023 13:00");
+        subtask1.setStartDateTime(start + " 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epic1CreateRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -884,11 +891,11 @@ public class EndpointTest {
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartDateTime("01.08.2023 13:00");
+        subtask1.setStartDateTime(start + " 13:00");
         subtask1.setDuration(15L);
 
         Subtask subtask2 = taskManager.createSubtask("subtask2", "2d subtask", epic1);
-        subtask2.setStartDateTime("01.08.2023 13:30");
+        subtask2.setStartDateTime(start + " 13:30");
         subtask2.setDuration(15L);
 
         HttpRequest epic1CreateRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -937,11 +944,11 @@ public class EndpointTest {
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartDateTime("01.08.2023 13:00");
+        subtask1.setStartDateTime(start + " 13:00");
         subtask1.setDuration(15L);
 
         Subtask subtask2 = taskManager.createSubtask("subtask2", "2d subtask", epic1);
-        subtask2.setStartDateTime("01.08.2023 13:30");
+        subtask2.setStartDateTime(start + " 13:30");
         subtask2.setDuration(15L);
 
         HttpRequest epic1CreateRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -993,7 +1000,7 @@ public class EndpointTest {
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartDateTime("01.08.2023 13:00");
+        subtask1.setStartDateTime(start + " 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epic1CreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -1039,7 +1046,7 @@ public class EndpointTest {
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartDateTime("01.08.2023 13:00");
+        subtask1.setStartDateTime(start + " 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epic1CreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -1081,7 +1088,7 @@ public class EndpointTest {
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartDateTime("01.08.2023 13:00");
+        subtask1.setStartDateTime(start + " 13:00");
         subtask1.setDuration(15L);
 
         HttpRequest epic1CreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -1167,11 +1174,11 @@ public class EndpointTest {
         HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartDateTime("01.08.2023 12:00");
+        task1.setStartDateTime(start + " 12:00");
         task1.setDuration(15L);
 
         Task task2 = taskManager.createTask("task2", "2d task");
-        task2.setStartDateTime("01.08.2023 12:30");
+        task2.setStartDateTime(start + " 12:30");
         task2.setDuration(15L);
 
         HttpRequest task1CreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -1267,11 +1274,11 @@ public class EndpointTest {
         HttpTaskManager taskManager = new HttpTaskManager(urlForHttpTaskServer);
 
         Task task1 = taskManager.createTask("task1", "1st task");
-        task1.setStartDateTime("01.08.2023 12:00");
+        task1.setStartDateTime(start + " 12:00");
         task1.setDuration(15L);
 
         Task task2 = taskManager.createTask("task2", "2d task");
-        task2.setStartDateTime("01.08.2023 12:30");
+        task2.setStartDateTime(start + " 12:30");
         task2.setDuration(15L);
 
         HttpRequest task1CreationRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
@@ -1321,11 +1328,11 @@ public class EndpointTest {
         Epic epic1 = taskManager.createEpic("epic1", "1st epic");
 
         Subtask subtask1 = taskManager.createSubtask("subtask1", "1st subtask", epic1);
-        subtask1.setStartDateTime("01.08.2023 13:00");
+        subtask1.setStartDateTime(start + " 13:00");
         subtask1.setDuration(15L);
 
         Subtask subtask2 = taskManager.createSubtask("subtask2", "2d subtask", epic1);
-        subtask2.setStartDateTime("01.08.2023 13:30");
+        subtask2.setStartDateTime(start + " 13:30");
         subtask2.setDuration(15L);
 
         HttpRequest epic1CreateRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(gson.
